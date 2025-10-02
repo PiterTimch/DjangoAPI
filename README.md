@@ -46,3 +46,9 @@ py manage.py migrate
 ```
 py manage.py startapp app_name
 ```
+
+## Create vite react
+
+```
+npm create vite@latest
+```
