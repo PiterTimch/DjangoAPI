@@ -37,3 +37,9 @@ DATABASES = {
 py manage.py migrate
 
 ```
+
+## Create app
+
+```
+py manage.py startapp app_name
+```

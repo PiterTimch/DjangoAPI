@@ -10,13 +10,9 @@ LAST_NAMES = ["Smith", "Johnson", "Brown", "Taylor", "Anderson", "Lee"]
 DOMAINS = ["example.com", "test.com", "mail.com"]
 
 def generate_random_users(n=5):
-    """
-    Генерує n унікальних користувачів у базі.
-    """
     created_users = []
 
     for _ in range(n):
-        # Унікальний username
         while True:
             username = f"user{random.randint(1000, 9999)}"
             if not User.objects.filter(username=username).exists():
