@@ -12,6 +12,8 @@ py -m pip install Django
 
 django-admin startproject atbapi
 
+pip install -r requirements.txt
+
 py manage.py runserver 9581
 
 ```
@@ -34,6 +36,7 @@ DATABASES = {
     }
 }
 
+py manage.py makemigrations users
 py manage.py migrate
 
 ```
