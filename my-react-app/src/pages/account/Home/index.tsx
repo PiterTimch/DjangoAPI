@@ -1,23 +1,7 @@
-import { useEffect, useState } from "react";
-import axios from "axios";
-import type {IUserItem} from "../../../types/users/IUserItem.ts";
+import {useGetUsersQuery} from "../../../services/useeService.ts";
 
 const HomePage : React.FC = () => {
-    const [users, setUsers] = useState<Array<IUserItem>>([]);
-
-    const loadList = async () => {
-        try {
-            const res = await axios<IUserItem[]>('http://127.0.0.1:9581/api/users/');
-            setUsers(res.data);
-        }
-        catch (e) {
-            console.error(e)
-        }
-    }
-
-    useEffect(() => {
-        loadList();
-    }, []);
+    const  {data: users } = useGetUsersQuery();
 
     return (
         <>
@@ -35,7 +19,7 @@ const HomePage : React.FC = () => {
                         </tr>
                         </thead>
                         <tbody className="divide-y divide-gray-200">
-                        {users.map((user) => (
+                        {users?.map((user) => (
                             <tr
                                 key={user.id}
                                 className="hover:bg-gray-50 transition-colors"
