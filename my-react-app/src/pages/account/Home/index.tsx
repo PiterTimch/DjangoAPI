@@ -1,10 +1,15 @@
-import {useGetUsersQuery} from "../../../services/useeService.ts";
+import React from "react";
+import type { IUserItem } from "../../../types/users/IUserItem";
+import { useGetUsersQuery } from "../../../services/useeService.ts";
+import UserRow from "./UserCard.tsx";
 
-const HomePage : React.FC = () => {
-    const  {data: users } = useGetUsersQuery();
+const HomePage: React.FC = () => {
+    const { data: users, isLoading } = useGetUsersQuery();
 
     return (
         <>
+            {isLoading && <div>Loading...</div>}
+
             <div className="p-6">
                 <h1 className="text-3xl font-bold mb-6 text-gray-800">Users</h1>
 
@@ -19,24 +24,15 @@ const HomePage : React.FC = () => {
                         </tr>
                         </thead>
                         <tbody className="divide-y divide-gray-200">
-                        {users?.map((user) => (
-                            <tr
-                                key={user.id}
-                                className="hover:bg-gray-50 transition-colors"
-                            >
-                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{user.id}</td>
-                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{user.first_name}</td>
-                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{user.last_name}</td>
-                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{user.email}</td>
-                            </tr>
+                        {users?.map((user: IUserItem) => (
+                            <UserRow key={user.id} user={user} />
                         ))}
                         </tbody>
                     </table>
                 </div>
             </div>
         </>
-
-    )
-}
+    );
+};
 
 export default HomePage;
