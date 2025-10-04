@@ -21,8 +21,7 @@ function createImage(url: string): Promise<HTMLImageElement> {
 async function getCroppedImgFromCropper(
     imageSrc: string,
     crop: Area,
-    rotation = 0,
-    flipH = false
+    rotation = 0
 ): Promise<string> {
     const image = await createImage(imageSrc);
     const canvas = document.createElement("canvas");
@@ -34,7 +33,6 @@ async function getCroppedImgFromCropper(
     ctx.save();
     ctx.translate(canvas.width / 2, canvas.height / 2);
     ctx.rotate((rotation * Math.PI) / 180);
-    ctx.scale(flipH ? -1 : 1, 1);
 
     ctx.drawImage(
         image,
