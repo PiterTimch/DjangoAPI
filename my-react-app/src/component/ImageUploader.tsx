@@ -65,7 +65,6 @@ const ImageUploader: React.FC = () => {
     const [crop, setCrop] = useState({ x: 0, y: 0 });
     const [zoom, setZoom] = useState(1);
     const [rotation, setRotation] = useState(0);
-    const [flipH, setFlipH] = useState(false);
     const [croppedAreaPixels, setCroppedAreaPixels] = useState<Area | null>(null);
     const [modalOpen, setModalOpen] = useState(false);
 
@@ -85,8 +84,7 @@ const ImageUploader: React.FC = () => {
         const cropped = await getCroppedImgFromCropper(
             imageSrc,
             croppedAreaPixels,
-            rotation,
-            flipH
+            rotation
         );
         setCroppedImage(cropped);
         setModalOpen(false);
@@ -135,7 +133,6 @@ const ImageUploader: React.FC = () => {
                         <div className="mt-2 flex justify-between">
                             <button onClick={() => setRotation((r) => r - 90)}>Rotate Left</button>
                             <button onClick={() => setRotation((r) => r + 90)}>Rotate Right</button>
-                            <button onClick={() => setFlipH((f) => !f)}>Flip</button>
                             <button onClick={onSave} className="text-green-600">Save</button>
                             <button onClick={() => setModalOpen(false)} className="text-red-600">Cancel</button>
                         </div>
