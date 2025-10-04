@@ -34,7 +34,7 @@ def generate_random_users(n=5):
     return created_users
 
 
-class UserViewSet(viewsets.ReadOnlyModelViewSet):
+class UserViewSet(viewsets.ModelViewSet):
     queryset = CustomUser.objects.all()
     serializer_class = UserSerializer
 
@@ -43,3 +43,9 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
         users = generate_random_users(5)
         serializer = self.get_serializer(users, many=True)
         return Response(serializer.data)
+    
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
