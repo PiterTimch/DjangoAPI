@@ -1,6 +1,7 @@
 import {createApi} from "@reduxjs/toolkit/query/react";
 import {createBaseQuery} from "../utils/createBaseQuery";
 import type {IUserItem} from "../types/users/IUserItem";
+import type {IRegisterItem} from "../types/users/IUserRegister.ts";
 
 export const userService = createApi({
     reducerPath: 'userService',
@@ -17,10 +18,21 @@ export const userService = createApi({
             },
             providesTags: ["Users"]
         }),
+        registerUser: builder.mutation<IUserItem, IRegisterItem>({
+            query: (user) => {
+                return {
+                    url: 'create',
+                    method: 'POST',
+                    body: user
+                };
+            },
+            invalidatesTags: ["Users"]
+        })
 
     }),
 })
 
 export const {
     useGetUsersQuery,
+    useRegisterUserMutation,
 } = userService;

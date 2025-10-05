@@ -2,6 +2,8 @@ import React from "react";
 import AutoForm from "../../../component/form/AutoForm";
 import ImageUploader from "../../../component/form/ImageUploader";
 import type {FormField} from "../../../component/form/FormField.tsx";
+import {useRegisterUserMutation} from "../../../services/userService.ts";
+import type {IRegisterItem} from "../../../types/users/IUserRegister.ts";
 
 const registerFields: FormField[] = [
     { label: "Name", name: "name", placeholder: "John", wrapperClassName: "w-1/2 px-3" },
@@ -13,9 +15,33 @@ const registerFields: FormField[] = [
 ];
 
 const RegisterPage: React.FC = () => {
-    const handleRegister = (data: Record<string, any>) => {
-        console.log("Form submitted:", data);
+    const [registerUser] = useRegisterUserMutation();
+
+    const handleRegister = async (data: Record<string, any>) => {
+        const payload: IRegisterItem = {
+            id: 0,
+            first_name: data.name,
+            last_name: data.surname,
+            email: data.email,
+            avatar: "",
+        };
+
+        if (data.avatar instanceof File) {
+            payload.avatar = await new Promise<string>((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = () => resolve(reader.result as string);
+                reader.onerror = (err) => reject(err);
+                reader.readAsDataURL(data.avatar);
+            });
+        } else if (typeof data.avatar === "string") {
+            payload.avatar = data.avatar;
+        }
+
+        const res = await registerUser(payload);
+        console.log(res);
     };
+
+
 
     return (
         <div className="min-h-screen flex items-center justify-center py-5">

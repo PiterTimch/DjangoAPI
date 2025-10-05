@@ -1,6 +1,6 @@
 import React from "react";
 import type { IUserItem } from "../../../types/users/IUserItem";
-import { useGetUsersQuery } from "../../../services/useeService.ts";
+import { useGetUsersQuery } from "../../../services/userService.ts";
 import UserRow from "./UserCard.tsx";
 
 const HomePage: React.FC = () => {
