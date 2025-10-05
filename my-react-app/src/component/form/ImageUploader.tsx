@@ -96,19 +96,23 @@ const ImageUploader: React.FC = () => {
             )}
 
             {croppedImage && (
-                <div className="flex flex-col items-center mt-4">
-                    <img
-                        src={croppedImage}
-                        alt="Cropped Preview"
-                        className="w-32 h-32 rounded-full object-cover border shadow"
-                    />
-                    <button
-                        onClick={() => setCroppedImage(null)}
-                        className="mt-3 text-sm text-red-500 hover:underline"
-                    >
-                        Change photo
-                    </button>
-                </div>
+                <>
+                    <input type="hidden" name="avatar" value={croppedImage} />
+
+                    <div className="flex flex-col items-center mt-4">
+                        <img
+                            src={croppedImage}
+                            alt="Cropped Preview"
+                            className="w-32 h-32 rounded-full object-cover border shadow"
+                        />
+                        <button
+                            onClick={() => setCroppedImage(null)}
+                            className="mt-3 text-sm text-red-500 hover:underline"
+                        >
+                            Change photo
+                        </button>
+                    </div>
+                </>
             )}
 
             {modalOpen && imageSrc && (
