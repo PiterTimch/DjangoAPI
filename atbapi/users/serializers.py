@@ -4,6 +4,7 @@ import base64
 from django.core.files.base import ContentFile
 from PIL import Image
 import io
+import uuid
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -24,28 +25,30 @@ class RegisterSerializer(serializers.ModelSerializer):
         user = CustomUser(**validated_data)
         user.set_password(password)
 
+        print(avatar_data)
+
         if avatar_data:
             if avatar_data.startswith("data:image"):
-                format, imgstr = avatar_data.split(";base64,")
-                ext = format.split("/")[-1]
+                _, imgstr = avatar_data.split(";base64,")
                 img_bytes = base64.b64decode(imgstr)
             else:
                 img_bytes = base64.b64decode(avatar_data)
-                ext = "webp"
 
-            img = Image.open(io.BytesIO(img_bytes))
+            img = Image.open(io.BytesIO(img_bytes)).convert("RGB")
 
-            def save_resized(img_obj, size):
+            random_name = f"{uuid.uuid4().hex}.webp"
+
+            def save_resized(img_obj, size, suffix):
                 img_copy = img_obj.copy()
-                img_copy.thumbnail(size, Image.ANTIALIAS)
+                img_copy.thumbnail(size, Image.LANCZOS)
                 temp_io = io.BytesIO()
-                img_copy.save(temp_io, format=ext.upper())
-                return ContentFile(temp_io.getvalue())
+                img_copy.save(temp_io, format="WEBP", quality=85)
+                return ContentFile(temp_io.getvalue(), name=random_name)
 
-            user.image_small.save(f"{user.email}_small.{ext}", save_resized(img, (50, 50)), save=False)
-            user.image_medium.save(f"{user.email}_medium.{ext}", save_resized(img, (150, 150)), save=False)
-            user.image_large.save(f"{user.email}_large.{ext}", save_resized(img, (300, 300)), save=False)
+            user.image_small.save(f"{random_name}_small.webp", save_resized(img, (50, 50), "small"), save=False)
+            user.image_medium.save(f"{random_name}_medium.webp", save_resized(img, (150, 150), "medium"), save=False)
+            user.image_large.save(f"{random_name}_large.webp", save_resized(img, (300, 300), "large"), save=False)
 
-            user.username = user.email
+        user.username = user.email
         user.save()
         return user
