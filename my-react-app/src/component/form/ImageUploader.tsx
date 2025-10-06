@@ -51,8 +51,9 @@ async function getCroppedImgFromCropper(
     return new Promise((resolve) => {
         canvas.toBlob((blob) => {
             if (!blob) return;
-            const url = URL.createObjectURL(blob);
-            resolve(url);
+            const reader = new FileReader();
+            reader.onloadend = () => resolve(reader.result as string);
+            reader.readAsDataURL(blob);
         }, "image/jpeg");
     });
 }
@@ -133,10 +134,10 @@ const ImageUploader: React.FC = () => {
                             />
                         </div>
                         <div className="mt-2 flex justify-between">
-                            <button onClick={() => setRotation((r) => r - 90)}>Rotate Left</button>
-                            <button onClick={() => setRotation((r) => r + 90)}>Rotate Right</button>
-                            <button onClick={onSave} className="text-green-600">Save</button>
-                            <button onClick={() => setModalOpen(false)} className="text-red-600">Cancel</button>
+                            <button type="button" onClick={() => setRotation((r) => r - 90)}>Rotate Left</button>
+                            <button type="button" onClick={() => setRotation((r) => r + 90)}>Rotate Right</button>
+                            <button type="button" onClick={onSave} className="text-green-600">Save</button>
+                            <button type="button" onClick={() => setModalOpen(false)} className="text-red-600">Cancel</button>
                         </div>
                     </div>
                 </div>

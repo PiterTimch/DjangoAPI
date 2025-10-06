@@ -21,7 +21,7 @@ export const userService = createApi({
         registerUser: builder.mutation<IUserItem, IRegisterItem>({
             query: (user) => {
                 return {
-                    url: 'create',
+                    url: '',
                     method: 'POST',
                     body: user
                 };
