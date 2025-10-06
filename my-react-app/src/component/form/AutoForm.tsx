@@ -21,21 +21,23 @@ const AutoForm: React.FC<AutoFormProps> = ({ fields, onSubmit, submitLabel = "Su
 
     return (
         <form onSubmit={handleSubmit} className="space-y-4">
-            {fields.map((field) => {
-                if (field.component) {
+            <div className="flex flex-wrap -mx-3">
+                {fields.map((field) => {
+                    if (field.component) {
+                        return (
+                            <div key={field.name} className={field.wrapperClassName ?? "mb-5"}>
+                                {field.component}
+                            </div>
+                        );
+                    }
+
                     return (
                         <div key={field.name} className={field.wrapperClassName ?? "mb-5"}>
-                            {field.component}
+                            <BaseFormInput {...field} />
                         </div>
                     );
-                }
-
-                return (
-                    <div key={field.name} className={field.wrapperClassName ?? "mb-5"}>
-                        <BaseFormInput {...field} />
-                    </div>
-                );
-            })}
+                })}
+            </div>
 
             <button
                 type="submit"
