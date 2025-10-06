@@ -124,6 +124,10 @@ USE_I18N = True
 
 USE_TZ = True
 
+IMAGES_URL = '/images/'
+
+IMAGES_ROOT = BASE_DIR / 'images'
+
 AUTH_USER_MODEL = 'users.CustomUser'
 
 # Static files (CSS, JavaScript, Images)
