@@ -43,7 +43,7 @@ class RegisterSerializer(serializers.ModelSerializer):
                 filepath = os.path.join(settings.MEDIA_ROOT, "images", filename)
                 os.makedirs(os.path.dirname(filepath), exist_ok=True)
                 img_copy.save(filepath, format="WEBP", quality=85)
-                return filename  # тільки назва для БД
+                return filename
 
             user.image_small = save_resized(img, (50, 50), "small")
             user.image_medium = save_resized(img, (150, 150), "medium")
