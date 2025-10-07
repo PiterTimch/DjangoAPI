@@ -4,7 +4,7 @@ import UserListItem from "./UserListItem";
 const UsersListPage = () => {
     const {data: users, isLoading} = useGetUsersQuery();
 
-    console.log("listUsers", users);
+    console.log("isLoading...", isLoading);
 
     const contentUsers = users?.map((user) => {
         return (
@@ -22,6 +22,9 @@ const UsersListPage = () => {
                     <tr>
                         <th scope="col" className="px-6 py-3">
                             Id
+                        </th>
+                        <th scope="col" className="px-6 py-3">
+
                         </th>
                         <th scope="col" className="px-6 py-3">
                             Full name
