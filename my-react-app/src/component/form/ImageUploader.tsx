@@ -8,6 +8,11 @@ type Area = {
     y: number;
 };
 
+interface ImageUploaderProps {
+    value?: string;
+    onChange?: (value: string | null) => void;
+}
+
 function createImage(url: string): Promise<HTMLImageElement> {
     return new Promise((resolve, reject) => {
         const image = new Image();
@@ -58,9 +63,9 @@ async function getCroppedImgFromCropper(
     });
 }
 
-const ImageUploader: React.FC = () => {
+const ImageUploader: React.FC<ImageUploaderProps> = ({ value, onChange }) => {
     const [imageSrc, setImageSrc] = useState<string | null>(null);
-    const [croppedImage, setCroppedImage] = useState<string | null>(null);
+    const [croppedImage, setCroppedImage] = useState<string | null>(value || null);
     const [crop, setCrop] = useState({ x: 0, y: 0 });
     const [zoom, setZoom] = useState(1);
     const [rotation, setRotation] = useState(0);
@@ -87,33 +92,35 @@ const ImageUploader: React.FC = () => {
         );
         setCroppedImage(cropped);
         setModalOpen(false);
+        onChange?.(cropped);
     };
 
     return (
         <div className="mb-6">
             <label className="block text-xs font-semibold mb-2">Profile photo</label>
+
             {!croppedImage && (
                 <input type="file" accept="image/*" onChange={onFileChange} />
             )}
 
             {croppedImage && (
-                <>
-                    <input type="hidden" name="avatar" value={croppedImage} />
-
-                    <div className="flex flex-col items-center mt-4">
-                        <img
-                            src={croppedImage}
-                            alt="Cropped Preview"
-                            className="w-32 h-32 rounded-full object-cover border shadow"
-                        />
-                        <button
-                            onClick={() => setCroppedImage(null)}
-                            className="mt-3 text-sm text-red-500 hover:underline"
-                        >
-                            Change photo
-                        </button>
-                    </div>
-                </>
+                <div className="flex flex-col items-center mt-4">
+                    <img
+                        src={croppedImage}
+                        alt="Cropped Preview"
+                        className="w-32 h-32 rounded-full object-cover border shadow"
+                    />
+                    <button
+                        type="button"
+                        onClick={() => {
+                            setCroppedImage(null);
+                            onChange?.(null);
+                        }}
+                        className="mt-3 text-sm text-red-500 hover:underline"
+                    >
+                        Change photo
+                    </button>
+                </div>
             )}
 
             {modalOpen && imageSrc && (
