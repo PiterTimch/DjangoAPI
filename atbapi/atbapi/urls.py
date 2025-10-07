@@ -8,3 +8,4 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include('users.urls')),
 ]
+urlpatterns += static(settings.AVATARS_URL, document_root=settings.AVATARS_ROOT)
