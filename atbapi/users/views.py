@@ -1,14 +1,15 @@
 import random
-from rest_framework import viewsets
+from rest_framework import viewsets, status, parsers
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from .models import CustomUser
-from .serializers import RegisterSerializer, UserSerializer
-from rest_framework import status
+from .serializers import UserSerializer, RegisterSerializer
+from rest_framework_simplejwt.tokens import RefreshToken
 
 FIRST_NAMES = ["Alice", "Bob", "Charlie", "Diana", "Eve", "Frank"]
 LAST_NAMES = ["Smith", "Johnson", "Brown", "Taylor", "Anderson", "Lee"]
 DOMAINS = ["example.com", "test.com", "mail.com"]
+
 
 def generate_random_users(n=5):
     created_users = []
@@ -34,9 +35,10 @@ def generate_random_users(n=5):
     return created_users
 
 
-class UserViewSet(viewsets.ModelViewSet):
+class UserViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = CustomUser.objects.all()
     serializer_class = UserSerializer
+    parser_classes = [parsers.MultiPartParser, parsers.FormParser]
 
     @action(detail=False, methods=["post"])
     def generate(self, request):
@@ -44,9 +46,19 @@ class UserViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(users, many=True)
         return Response(serializer.data)
     
-    def create(self, request, *args, **kwargs):
+    @action(detail=False, methods=['post'], url_path='register', serializer_class=RegisterSerializer)
+    def register(self, request):
         serializer = RegisterSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        user = serializer.save()
-        return Response(UserSerializer(user).data, status=status.HTTP_201_CREATED)
+        if serializer.is_valid():
+            user = serializer.save()
 
+            refresh = RefreshToken.for_user(user)
+
+            return Response(
+                {
+                    "refresh": str(refresh),
+                    "access": str(refresh.access_token),
+                },
+                status=status.HTTP_201_CREATED
+            )
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

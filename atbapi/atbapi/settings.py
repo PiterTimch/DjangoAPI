@@ -20,7 +20,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-gfkd37gs_&lyg3!9wmlw-)8jc*o$2ln03d%y9vp(p72vc$*wlf'
+SECRET_KEY = 'django-insecure-c=fx(3m6b^euazx0ek=959a1qd2t3!3jkjocu+gj((ci!m8^@y'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -39,12 +39,20 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'atbapi',
+    'drf_spectacular',
     'users',
     "corsheaders"
 ]
 
+REST_FRAMEWORK = {
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ),
+}
+
 MIDDLEWARE = [
-    "corsheaders.middleware.CorsMiddleware",
+    "corsheaders.middleware.CorsMiddleware",  # має бути якомога вище
     "django.middleware.common.CommonMiddleware",
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -92,7 +100,7 @@ DATABASES = {
         'PORT': '5432'
     }
 }
- 
+
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
@@ -124,10 +132,6 @@ USE_I18N = True
 
 USE_TZ = True
 
-IMAGES_URL = '/images/'
-
-IMAGES_ROOT = BASE_DIR / 'images'
-
 AUTH_USER_MODEL = 'users.CustomUser'
 
 # Static files (CSS, JavaScript, Images)
@@ -135,7 +139,12 @@ AUTH_USER_MODEL = 'users.CustomUser'
 
 STATIC_URL = 'static/'
 
+AVATARS_URL = '/images/'
+
+AVATARS_ROOT = BASE_DIR / 'images'
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+ 

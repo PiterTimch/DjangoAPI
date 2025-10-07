@@ -4,7 +4,7 @@ import UserListItem from "./UserListItem";
 const UsersListPage = () => {
     const {data: users, isLoading} = useGetUsersQuery();
 
-    console.log("isLoading...", isLoading);
+    console.log("listUsers", users);
 
     const contentUsers = users?.map((user) => {
         return (

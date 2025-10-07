@@ -5,6 +5,7 @@ import {useDispatch} from "react-redux";
 import {setTokens} from "../../store/authSlice.ts";
 import {useNavigate} from "react-router";
 import ImageUploader from "../uploaders/ImagesUploader.tsx";
+import type {IUserRegister} from "../../types/users/IUserRegister.ts";
 
 const RegisterForm: React.FC = () => {
     const [form] = Form.useForm();
