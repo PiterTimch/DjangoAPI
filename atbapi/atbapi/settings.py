@@ -41,7 +41,7 @@ INSTALLED_APPS = [
     'atbapi',
     'drf_spectacular',
     'users',
-    "corsheaders"
+    "corsheaders",
 ]
 
 REST_FRAMEWORK = {
@@ -148,3 +148,9 @@ AVATARS_ROOT = BASE_DIR / 'images'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
  
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'DjangoApi',
+    'DESCRIPTION': 'Django REST API',
+    'VERSION': '1.0.0',
+    'SERVE_INCLUDE_SCHEMA': False,
+}
