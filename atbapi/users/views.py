@@ -1,10 +1,23 @@
 import random
+from django.core.mail import send_mail
+from django.conf import settings
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.utils.encoding import force_bytes
+from django.contrib.auth.tokens import default_token_generator
+
 from rest_framework import viewsets, status, parsers
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from .models import CustomUser
-from .serializers import UserSerializer, RegisterSerializer
 from rest_framework_simplejwt.tokens import RefreshToken
+
+from .models import CustomUser
+from .serializers import (
+    UserSerializer,
+    RegisterSerializer,
+    PasswordResetRequestSerializer,
+    SetNewPasswordSerializer
+)
+
 
 FIRST_NAMES = ["Alice", "Bob", "Charlie", "Diana", "Eve", "Frank"]
 LAST_NAMES = ["Smith", "Johnson", "Brown", "Taylor", "Anderson", "Lee"]
@@ -40,13 +53,17 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = UserSerializer
     parser_classes = [parsers.MultiPartParser, parsers.FormParser]
 
-    @action(detail=False, methods=["post"])
+    @action(detail=False, 
+            methods=["post"])
     def generate(self, request):
         users = generate_random_users(5)
         serializer = self.get_serializer(users, many=True)
         return Response(serializer.data)
     
-    @action(detail=False, methods=['post'], url_path='register', serializer_class=RegisterSerializer)
+    @action(detail=False, 
+            methods=['post'], 
+            url_path='register', 
+            serializer_class=RegisterSerializer)
     def register(self, request):
         serializer = RegisterSerializer(data=request.data)
         if serializer.is_valid():
@@ -62,3 +79,51 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
                 status=status.HTTP_201_CREATED
             )
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    @action(detail=False, 
+            methods=['post'], 
+            url_path='password-reset-request',
+            serializer_class=PasswordResetRequestSerializer)
+    def password_reset_request(self, request):
+        serializer = PasswordResetRequestSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        email = serializer.validated_data['email']
+
+        try:
+            user = CustomUser.objects.get(email=email)
+        except CustomUser.DoesNotExist:
+            return Response({"detail": "Користувача з таким email не існує"}, status=status.HTTP_400_BAD_REQUEST)
+
+        uid = urlsafe_base64_encode(force_bytes(user.pk))
+        token = default_token_generator.make_token(user)
+        reset_link = f"http://your-frontend/reset-password/{uid}/{token}/"
+
+        send_mail(
+            subject="Відновлення паролю",
+            message=f"Перейдіть за посиланням для скидання паролю: {reset_link}",
+            from_email=settings.DEFAULT_FROM_EMAIL,
+            recipient_list=[email],
+        )
+
+        return Response({"detail": "Лист для відновлення паролю відправлено"}, status=status.HTTP_200_OK)
+
+    @action(detail=False, 
+            methods=['post'], 
+            url_path='password-reset-confirm',
+            serializer_class=SetNewPasswordSerializer)
+    def password_reset_confirm(self, request):
+        serializer = SetNewPasswordSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        try:
+            uid = urlsafe_base64_decode(serializer.validated_data['uid']).decode()
+            user = CustomUser.objects.get(pk=uid)
+        except (TypeError, ValueError, OverflowError, CustomUser.DoesNotExist):
+            return Response({"detail": "Невірний uid"}, status=status.HTTP_400_BAD_REQUEST)
+
+        if not default_token_generator.check_token(user, serializer.validated_data['token']):
+            return Response({"detail": "Невірний або прострочений токен"}, status=status.HTTP_400_BAD_REQUEST)
+
+        user.set_password(serializer.validated_data['new_password'])
+        user.save()
+        return Response({"detail": "Пароль успішно змінено"}, status=status.HTTP_200_OK)

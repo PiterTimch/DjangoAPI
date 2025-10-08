@@ -148,6 +148,8 @@ AVATARS_ROOT = BASE_DIR / 'images'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
  
+DEFAULT_FROM_EMAIL = ''
+
 SPECTACULAR_SETTINGS = {
     'TITLE': 'DjangoApi',
     'DESCRIPTION': 'Django REST API',
