@@ -4,6 +4,8 @@ import type {IUserItem} from "../types/users/IUserItem";
 import type {ILoginResponse} from "../types/users/ILoginResponse.ts";
 import {serialize} from "object-to-formdata";
 import type {IUserRegister} from "../types/users/IUserRegister.ts";
+import type {IResetPasswordRequest} from "../types/users/IResetPasswordRequest.ts";
+import type {ILoginRequest} from "../types/users/ILoginRequest.ts";
 
 export const userService = createApi({
     reducerPath: 'userService',
@@ -32,10 +34,29 @@ export const userService = createApi({
             },
             invalidatesTags: ["Users"]
         }),
+        resetPasswordRequest: builder.mutation<void, IResetPasswordRequest>({
+            query: (credentials) => {
+                return {
+                    url: 'password-reset-request/',
+                    method: 'POST',
+                    body: credentials,
+                }
+            }
+        }),
+        login: builder.mutation<ILoginResponse, ILoginRequest>({
+            query: (credentials) => {
+                return {
+                    url: 'login/',
+                    method: 'POST',
+                    body: credentials,
+                }
+            }
+        })
     }),
 });
 
 export const {
     useGetUsersQuery,
     useRegisterMutation,
+    useLoginMutation,
 } = userService;
