@@ -81,31 +81,17 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
     @action(detail=False, 
-            methods=['post'], 
-            url_path='password-reset-request',
-            serializer_class=PasswordResetRequestSerializer)
+        methods=['post'], 
+        url_path='password-reset-request',
+        serializer_class=PasswordResetRequestSerializer)
     def password_reset_request(self, request):
         serializer = PasswordResetRequestSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        email = serializer.validated_data['email']
-
-        try:
-            user = CustomUser.objects.get(email=email)
-        except CustomUser.DoesNotExist:
-            return Response({"detail": "Користувача з таким email не існує"}, status=status.HTTP_400_BAD_REQUEST)
-
-        uid = urlsafe_base64_encode(force_bytes(user.pk))
-        token = default_token_generator.make_token(user)
-        reset_link = f"http://your-frontend/reset-password/{uid}/{token}/"
-
-        send_mail(
-            subject="Відновлення паролю",
-            message=f"Перейдіть за посиланням для скидання паролю: {reset_link}",
-            from_email=settings.DEFAULT_FROM_EMAIL,
-            recipient_list=[email],
+        serializer.save()
+        return Response(
+            {"detail": "Лист для відновлення паролю відправлено"}, 
+            status=status.HTTP_200_OK
         )
-
-        return Response({"detail": "Лист для відновлення паролю відправлено"}, status=status.HTTP_200_OK)
 
     @action(detail=False, 
             methods=['post'], 

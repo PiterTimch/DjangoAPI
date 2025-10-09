@@ -148,7 +148,15 @@ AVATARS_ROOT = BASE_DIR / 'images'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
  
-DEFAULT_FROM_EMAIL = ''
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.ukr.net'
+EMAIL_PORT = 465 
+EMAIL_USE_SSL = True 
+EMAIL_HOST_USER = 'sasho-zub@ukr.net'
+EMAIL_HOST_PASSWORD = '0kWnYW31iKoEjfU5'
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+
+FRONTEND_URL='http://localhost:5173'
 
 SPECTACULAR_SETTINGS = {
     'TITLE': 'DjangoApi',
