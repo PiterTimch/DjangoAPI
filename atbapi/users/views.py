@@ -15,8 +15,10 @@ from .serializers import (
     UserSerializer,
     RegisterSerializer,
     PasswordResetRequestSerializer,
-    SetNewPasswordSerializer
+    SetNewPasswordSerializer,
+    CustomTokenObtainPairSerializer
 )
+from rest_framework_simplejwt.views import TokenObtainPairView
 
 
 FIRST_NAMES = ["Alice", "Bob", "Charlie", "Diana", "Eve", "Frank"]
@@ -113,3 +115,6 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
         user.set_password(serializer.validated_data['new_password'])
         user.save()
         return Response({"detail": "Пароль успішно змінено"}, status=status.HTTP_200_OK)
+    
+class LoginView(TokenObtainPairView):
+    serializer_class = CustomTokenObtainPairSerializer
