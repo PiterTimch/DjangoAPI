@@ -4,7 +4,7 @@ import LoginForm from "../../../components/forms/LoginForm.tsx";
 
 const { Title, Text } = Typography;
 
-const UserRegisterPage: React.FC = () => {
+const UserLoginPage: React.FC = () => {
     return (
         <div
             style={{
@@ -46,4 +46,4 @@ const UserRegisterPage: React.FC = () => {
     );
 };
 
-export default UserRegisterPage;
+export default UserLoginPage;

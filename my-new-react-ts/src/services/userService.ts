@@ -6,6 +6,7 @@ import {serialize} from "object-to-formdata";
 import type {IUserRegister} from "../types/users/IUserRegister.ts";
 import type {IResetPasswordRequest} from "../types/users/IResetPasswordRequest.ts";
 import type {ILoginRequest} from "../types/users/ILoginRequest.ts";
+import type {IResetPasswordConfirm} from "../types/users/IResetPasswordConfirm.ts";
 
 export const userService = createApi({
     reducerPath: 'userService',
@@ -36,19 +37,34 @@ export const userService = createApi({
         }),
         resetPasswordRequest: builder.mutation<void, IResetPasswordRequest>({
             query: (credentials) => {
+                const formData = serialize(credentials);
+
                 return {
                     url: 'password-reset-request/',
                     method: 'POST',
-                    body: credentials,
+                    body: formData,
+                }
+            }
+        }),
+        resetPassword: builder.mutation<void, IResetPasswordConfirm>({
+            query: (credentials) => {
+                const formData = serialize(credentials);
+
+                return {
+                    url: 'password-reset-confirm/',
+                    method: 'POST',
+                    body: formData,
                 }
             }
         }),
         login: builder.mutation<ILoginResponse, ILoginRequest>({
             query: (credentials) => {
+                const formData = serialize(credentials);
+
                 return {
                     url: 'login/',
                     method: 'POST',
-                    body: credentials,
+                    body: formData,
                 }
             }
         })
@@ -59,4 +75,6 @@ export const {
     useGetUsersQuery,
     useRegisterMutation,
     useLoginMutation,
+    useResetPasswordRequestMutation,
+    useResetPasswordMutation,
 } = userService;
