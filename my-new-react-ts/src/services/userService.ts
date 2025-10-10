@@ -59,12 +59,10 @@ export const userService = createApi({
         }),
         login: builder.mutation<ILoginResponse, ILoginRequest>({
             query: (credentials) => {
-                const formData = serialize(credentials);
-
                 return {
                     url: 'login/',
                     method: 'POST',
-                    body: formData,
+                    body: credentials,
                 }
             }
         })

@@ -10,6 +10,8 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
 
+from atbapi.users.utils import verify_recaptcha
+
 from .models import CustomUser
 from .serializers import (
     UserSerializer,
@@ -19,7 +21,6 @@ from .serializers import (
     CustomTokenObtainPairSerializer
 )
 from rest_framework_simplejwt.views import TokenObtainPairView
-
 
 FIRST_NAMES = ["Alice", "Bob", "Charlie", "Diana", "Eve", "Frank"]
 LAST_NAMES = ["Smith", "Johnson", "Brown", "Taylor", "Anderson", "Lee"]
@@ -116,5 +117,16 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
         user.save()
         return Response({"detail": "Пароль успішно змінено"}, status=status.HTTP_200_OK)
     
-class LoginView(TokenObtainPairView):
-    serializer_class = CustomTokenObtainPairSerializer
+class LoginAPIView(APIView):
+    def post(self, request):
+        recaptcha_token = request.data.get("recaptcha_token")
+        if not recaptcha_token:
+            return Response({"detail": "Missing reCAPTCHA token"}, status=400)
+
+        result = verify_recaptcha(recaptcha_token)
+        if not result.get("success") or result.get("score", 0) < 0.5:
+            return Response({"detail": "Invalid reCAPTCHA"}, status=400)
+
+        email = request.data.get("email")
+        password = request.data.get("password")
+        return Response({"detail": "Login successful"})

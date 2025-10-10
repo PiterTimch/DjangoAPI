@@ -31,14 +31,13 @@ const LoginForm: React.FC = () => {
             style={{ width: "100%" }}
         >
             <Form.Item
-                label="Email"
-                name="email"
+                label="User name"
+                name="username"
                 rules={[
-                    { required: true, message: "Please enter your email" },
-                    { type: "email", message: "Invalid email format" },
+                    { required: true, message: "Please enter your email" }
                 ]}
             >
-                <Input placeholder="johnsmith@example.com" />
+                <Input placeholder="johnsmith" />
             </Form.Item>
 
             <Form.Item
