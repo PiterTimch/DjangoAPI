@@ -1,8 +1,5 @@
 import random
-from django.core.mail import send_mail
-from django.conf import settings
-from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
-from django.utils.encoding import force_bytes
+from django.utils.http import urlsafe_base64_decode
 from django.contrib.auth.tokens import default_token_generator
 
 from rest_framework import viewsets, status, parsers
@@ -10,7 +7,7 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
 
-from atbapi.users.utils import verify_recaptcha
+from .utils import verify_recaptcha
 
 from .models import CustomUser
 from .serializers import (
@@ -68,19 +65,22 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
             url_path='register', 
             serializer_class=RegisterSerializer)
     def register(self, request):
+        recaptcha_token = request.data.get("recaptcha_token")
+        if not recaptcha_token:
+            return Response({"detail": "Missing reCAPTCHA token"}, status=400)
+
+        result = verify_recaptcha(recaptcha_token)
+        if not result.get("success") or result.get("score", 0) < 0.5:
+            return Response({"detail": "Invalid reCAPTCHA"}, status=400)
+
         serializer = RegisterSerializer(data=request.data)
         if serializer.is_valid():
             user = serializer.save()
-
             refresh = RefreshToken.for_user(user)
-
-            return Response(
-                {
-                    "refresh": str(refresh),
-                    "access": str(refresh.access_token),
-                },
-                status=status.HTTP_201_CREATED
-            )
+            return Response({
+                "refresh": str(refresh),
+                "access": str(refresh.access_token),
+            }, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
     @action(detail=False, 
@@ -117,8 +117,10 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
         user.save()
         return Response({"detail": "Пароль успішно змінено"}, status=status.HTTP_200_OK)
     
-class LoginAPIView(APIView):
-    def post(self, request):
+class LoginAPIView(TokenObtainPairView):
+    serializer_class = CustomTokenObtainPairSerializer
+
+    def post(self, request, *args, **kwargs):
         recaptcha_token = request.data.get("recaptcha_token")
         if not recaptcha_token:
             return Response({"detail": "Missing reCAPTCHA token"}, status=400)
@@ -127,6 +129,10 @@ class LoginAPIView(APIView):
         if not result.get("success") or result.get("score", 0) < 0.5:
             return Response({"detail": "Invalid reCAPTCHA"}, status=400)
 
-        email = request.data.get("email")
-        password = request.data.get("password")
-        return Response({"detail": "Login successful"})
+        serializer = self.get_serializer(data=request.data)
+        try:
+            serializer.is_valid(raise_exception=True)
+        except Exception as e:
+            return Response({"detail": "Invalid credentials"}, status=401)
+
+        return Response(serializer.validated_data, status=status.HTTP_200_OK)

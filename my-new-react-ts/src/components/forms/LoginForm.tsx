@@ -4,16 +4,23 @@ import {useDispatch} from "react-redux";
 import {setTokens} from "../../store/authSlice.ts";
 import {Link, useNavigate} from "react-router";
 import type {ILoginRequest} from "../../types/users/ILoginRequest.ts";
+import {useGoogleReCaptcha} from "react-google-recaptcha-v3";
 
 const LoginForm: React.FC = () => {
     const [form] = Form.useForm();
     const [login, { isLoading }] = useLoginMutation();
     const dispatch = useDispatch();
     const navigate = useNavigate();
+    const { executeRecaptcha } = useGoogleReCaptcha();
 
     const onFinish: FormProps<ILoginRequest>["onFinish"] = async (values) => {
+        if (!executeRecaptcha) return;
+
+        const token = await executeRecaptcha('login');
+        const payload : ILoginRequest = { ...values, recaptcha_token: token };
+
         try {
-            const result = await login(values).unwrap();
+            const result = await login(payload).unwrap();
             console.log(result);
             dispatch(setTokens(result));
             navigate('/');

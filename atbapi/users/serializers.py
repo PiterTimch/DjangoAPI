@@ -46,15 +46,16 @@ class RegisterSerializer(serializers.ModelSerializer):
         )
 
         if image:
-            optimized, name = compress_image(image, size=(300, 300))
-            user.image_small.save(name, optimized, save=False)
+            name = compress_image(image, size=(300, 300))
+            user.image_small = name
+            user.save()
 
-            optimized, name = compress_image(image, size=(800, 800))
-            user.image_medium.save(name, optimized, save=False)
+            name = compress_image(image, size=(800, 800))
+            user.image_medium = name
+            user.save()
 
-            optimized, name = compress_image(image, size=(1200, 1200))
-            user.image_large.save(name, optimized, save=False)
-
+            name = compress_image(image, size=(1200, 1200))
+            user.image_large = name
             user.save()
 
         return user
@@ -127,7 +128,7 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
         token['id'] = user.id
         token['username'] = user.username
         token['email'] = user.email
-        token['image'] = user.image_small.url if user.image_small else None
+        token['image'] = user.image_small if user.image_small else None
         token['date_joined'] = user.date_joined.strftime('%Y-%m-%d %H:%M:%S')
 
         return token
