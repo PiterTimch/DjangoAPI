@@ -6,6 +6,7 @@ import UserLoginPage from "./pages/users/UserLoginPage";
 import ForgotPasswordPage from "./pages/users/UserResetPasswordPage/ForgotPasswordPage.tsx";
 import ResetPasswordPage from "./pages/users/UserResetPasswordPage/ResetPasswordPage.tsx";
 import SuccessPage from "./pages/users/UserResetPasswordPage/SuccessPage.tsx";
+import UserLayout from "./layout/UserLayout.tsx";
 
 
 function App() {
@@ -13,7 +14,7 @@ function App() {
     return (
         <>
             <Routes>
-                <Route path="/" >
+                <Route path="/" element={<UserLayout />}>
                     <Route index element={<UsersListPage />}/>
                     <Route path={"register"} element={<UserRegisterPage />}/>
                     <Route path={"login"} element={<UserLoginPage />}/>
