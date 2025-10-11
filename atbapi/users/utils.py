@@ -13,18 +13,12 @@ def compress_image(image_field, size=(800,800), quality=85):
     uid = str(uuid.uuid4())[:10]
     image_name=f'{uid}.webp'
 
-    output = io.BytesIO()
+    image_path = settings.AVATARS_ROOT / image_name
+    image.save(image_path, format='WEBP', quality=quality)
 
-    image.save(output, format='WEBP', quality=quality)
-
-    output.seek(0)
-
-    optimized_image = ContentFile(output.getvalue())
-
-    return optimized_image, image_name
+    return image_name
 
 def verify_recaptcha(token):
-    """Перевіряє токен reCAPTCHA v3 через Google API"""
     secret_key = settings.RECAPTCHA_SECRET_KEY
     url = "https://www.google.com/recaptcha/api/siteverify"
     payload = {
@@ -33,4 +27,7 @@ def verify_recaptcha(token):
     }
     response = requests.post(url, data=payload)
     result = response.json()
+
+    print(result)
+
     return result
