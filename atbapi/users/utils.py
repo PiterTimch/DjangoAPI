@@ -1,7 +1,5 @@
 from PIL import Image
-import io
 import uuid
-from django.core.files.base import ContentFile
 import requests
 from django.conf import settings
 
