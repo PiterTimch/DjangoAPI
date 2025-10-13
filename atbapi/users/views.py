@@ -7,7 +7,7 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
 
-from .utils import verify_recaptcha
+from .utils import download_image_as_file, verify_recaptcha
 import requests
 from urllib.parse import urlparse
 from django.core.files.base import ContentFile
@@ -137,6 +137,9 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
             return Response({"detail": "Invalid Google token"}, status=400)
 
         data = response.json()
+
+        print(data)
+
         email = data.get("email")
         first_name = data.get("given_name", "")
         last_name = data.get("family_name", "")
@@ -153,23 +156,20 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
 
         if created and picture:
             try:
-                img_response = requests.get(picture)
-                if img_response.status_code == 200:
-                    tmp_img = NamedTemporaryFile(delete=True)
-                    tmp_img.write(img_response.content)
-                    tmp_img.flush()
+                image = download_image_as_file(picture)
 
-                    name_small = compress_image(tmp_img, size=(300, 300))
-                    user.image_small = name_small
-                    user.save()
+                name = compress_image(image, size=(300, 300))
+                user.image_small = name
+                user.save()
 
-                    name_medium = compress_image(tmp_img, size=(800, 800))
-                    user.image_medium = name_medium
-                    user.save()
+                name = compress_image(image, size=(800, 800))
+                user.image_medium = name
+                user.save()
 
-                    name_large = compress_image(tmp_img, size=(1200, 1200))
-                    user.image_large = name_large
-                    user.save()
+                name = compress_image(image, size=(1200, 1200))
+                user.image_large = name
+                user.save()
+
             except Exception as e:
                 print("Image save error:", e)
                 pass

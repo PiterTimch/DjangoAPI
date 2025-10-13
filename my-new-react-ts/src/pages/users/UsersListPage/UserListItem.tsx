@@ -1,4 +1,5 @@
 import type {IUserItem} from "../../../types/users/IUserItem";
+import {APP_ENV} from "../../../env";
 
 interface Props {
     user: IUserItem;
@@ -13,7 +14,7 @@ const UserListItem: React.FC<Props> = ({user}) => {
                     {user.id}
                 </th>
                 <td className="px-6 py-4">
-                    <img src={user.image_small} alt="avatar" className="w-10 h-10 rounded-full object-cover"/>
+                    <img src={APP_ENV.IMAGE_BASE_URL + user.image_small} alt="avatar" className="w-10 h-10 rounded-full object-cover"/>
                 </td>
                 <td className="px-6 py-4">
                     {user.last_name} {user.first_name}

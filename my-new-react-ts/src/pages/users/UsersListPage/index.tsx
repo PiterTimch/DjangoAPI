@@ -6,6 +6,8 @@ const UsersListPage = () => {
 
     console.log("isLoading...", isLoading);
 
+    console.log("users...", users);
+
     const contentUsers = users?.map((user) => {
         return (
             <UserListItem key={user.id} user={user} />
