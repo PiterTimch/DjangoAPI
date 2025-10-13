@@ -22,7 +22,8 @@ const LoginForm: React.FC = () => {
             try {
                 const model : IGoogleLoginRequest = { token: tokenResponse.access_token };
 
-                await loginByGoogle(model).unwrap();
+                const result = await loginByGoogle(model).unwrap();
+                dispatch(setTokens(result));
                 navigate('/');
             } catch (error) {
                 console.error(error);

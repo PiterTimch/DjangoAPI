@@ -2,6 +2,7 @@ from PIL import Image
 import uuid
 import requests
 import io
+from rest_framework_simplejwt.tokens import RefreshToken
 from django.conf import settings
 
 def compress_image(image_field, size=(800,800), quality=85):
@@ -54,3 +55,17 @@ def download_image_as_file(url: str, timeout: int = 10, max_size: int = 5 * 1024
 
     buf.seek(0)
     return buf
+
+def generate_tokens_for_user(user):
+    refresh = RefreshToken.for_user(user)
+
+    refresh["id"] = user.id
+    refresh["username"] = user.username
+    refresh["email"] = user.email
+    refresh["image"] = user.image_small if user.image_small else None
+    refresh["date_joined"] = user.date_joined.strftime("%Y-%m-%d %H:%M:%S")
+
+    return {
+        "refresh": str(refresh),
+        "access": str(refresh.access_token),
+    }

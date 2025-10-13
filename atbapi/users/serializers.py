@@ -9,7 +9,7 @@ from django.conf import settings
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 import requests
 from rest_framework_simplejwt.tokens import RefreshToken
-from .utils import download_image_as_file, compress_image
+from .utils import download_image_as_file, compress_image, generate_tokens_for_user
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -126,13 +126,11 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
     @classmethod
     def get_token(cls, user):
         token = super().get_token(user)
-
-        token['id'] = user.id
-        token['username'] = user.username
-        token['email'] = user.email
-        token['image'] = user.image_small if user.image_small else None
-        token['date_joined'] = user.date_joined.strftime('%Y-%m-%d %H:%M:%S')
-
+        token["id"] = user.id
+        token["username"] = user.username
+        token["email"] = user.email
+        token["image"] = user.image_small if getattr(user, "image_small", None) else None
+        token["date_joined"] = user.date_joined.strftime("%Y-%m-%d %H:%M:%S") if getattr(user, "date_joined", None) else None
         return token
     
 class GoogleLoginSerializer(serializers.Serializer):
@@ -180,12 +178,8 @@ class GoogleLoginSerializer(serializers.Serializer):
             except Exception as e:
                 print("Image save error:", e)
 
-        refresh = RefreshToken.for_user(user)
-        attrs["tokens"] = {
-            "refresh": str(refresh),
-            "access": str(refresh.access_token),
-        }
+        attrs = generate_tokens_for_user(user)
         return attrs
 
     def create(self, validated_data):
-        return validated_data["tokens"]
+        return validated_data
