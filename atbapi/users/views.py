@@ -7,10 +7,7 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
 
-from .utils import download_image_as_file, verify_recaptcha
-import requests
-from urllib.parse import urlparse
-from django.core.files.base import ContentFile
+from .utils import verify_recaptcha
 
 from .models import CustomUser
 from .serializers import (
@@ -18,11 +15,10 @@ from .serializers import (
     RegisterSerializer,
     PasswordResetRequestSerializer,
     SetNewPasswordSerializer,
-    CustomTokenObtainPairSerializer
+    CustomTokenObtainPairSerializer,
+    GoogleLoginSerializer
 )
 from rest_framework_simplejwt.views import TokenObtainPairView
-
-from .utils import compress_image
 from django.core.files.temp import NamedTemporaryFile
 
 FIRST_NAMES = ["Alice", "Bob", "Charlie", "Diana", "Eve", "Frank"]
@@ -123,62 +119,12 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
         user.save()
         return Response({"detail": "Пароль успішно змінено"}, status=status.HTTP_200_OK)
     
-    @action(detail=False, methods=["post"], url_path="google-login")
+    @action(detail=False, methods=["post"], url_path="google-login", serializer_class=GoogleLoginSerializer)
     def google_login(self, request):
-        token = request.data.get("token")
-        if not token:
-            return Response({"detail": "Missing Google token"}, status=400)
-
-        google_userinfo_url = "https://www.googleapis.com/oauth2/v2/userinfo"
-        headers = {"Authorization": f"Bearer {token}"}
-        response = requests.get(google_userinfo_url, headers=headers)
-
-        if response.status_code != 200:
-            return Response({"detail": "Invalid Google token"}, status=400)
-
-        data = response.json()
-
-        print(data)
-
-        email = data.get("email")
-        first_name = data.get("given_name", "")
-        last_name = data.get("family_name", "")
-        picture = data.get("picture")
-
-        if not email:
-            return Response({"detail": "Email not provided by Google"}, status=400)
-
-        user, created = CustomUser.objects.get_or_create(email=email, defaults={
-            "username": email.split("@")[0],
-            "first_name": first_name,
-            "last_name": last_name,
-        })
-
-        if created and picture:
-            try:
-                image = download_image_as_file(picture)
-
-                name = compress_image(image, size=(300, 300))
-                user.image_small = name
-                user.save()
-
-                name = compress_image(image, size=(800, 800))
-                user.image_medium = name
-                user.save()
-
-                name = compress_image(image, size=(1200, 1200))
-                user.image_large = name
-                user.save()
-
-            except Exception as e:
-                print("Image save error:", e)
-                pass
-
-        refresh = RefreshToken.for_user(user)
-        return Response({
-            "refresh": str(refresh),
-            "access": str(refresh.access_token)
-        })
+        serializer = GoogleLoginSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        tokens = serializer.save()
+        return Response(tokens, status=status.HTTP_200_OK)
     
 class LoginAPIView(TokenObtainPairView):
     serializer_class = CustomTokenObtainPairSerializer

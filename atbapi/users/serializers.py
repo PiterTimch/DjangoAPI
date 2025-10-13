@@ -1,5 +1,4 @@
 from rest_framework import serializers
-from .utils import compress_image
 from .models import CustomUser
 from django.contrib.auth import get_user_model
 from django.contrib.auth.tokens import default_token_generator
@@ -8,6 +7,9 @@ from django.utils.encoding import force_bytes
 from django.core.mail import send_mail
 from django.conf import settings
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+import requests
+from rest_framework_simplejwt.tokens import RefreshToken
+from .utils import download_image_as_file, compress_image
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -26,7 +28,7 @@ class UserSerializer(serializers.ModelSerializer):
 
 class RegisterSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
-    image = serializers.ImageField(write_only=True, required=False)  # лише одне поле для upload
+    image = serializers.ImageField(write_only=True, required=False)
 
     class Meta:
         model = CustomUser
@@ -132,3 +134,58 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
         token['date_joined'] = user.date_joined.strftime('%Y-%m-%d %H:%M:%S')
 
         return token
+    
+class GoogleLoginSerializer(serializers.Serializer):
+    token = serializers.CharField(write_only=True)
+
+    def validate(self, attrs):
+        token = attrs.get("token")
+        if not token:
+            raise serializers.ValidationError({"detail": "Missing Google token"})
+
+        google_userinfo_url = "https://www.googleapis.com/oauth2/v2/userinfo"
+        headers = {"Authorization": f"Bearer {token}"}
+        response = requests.get(google_userinfo_url, headers=headers)
+
+        if response.status_code != 200:
+            raise serializers.ValidationError({"detail": "Invalid Google token"})
+
+        data = response.json()
+
+        email = data.get("email")
+        first_name = data.get("given_name", "")
+        last_name = data.get("family_name", "")
+        picture = data.get("picture")
+
+        if not email:
+            raise serializers.ValidationError({"detail": "Email not provided by Google"})
+
+        user, created = User.objects.get_or_create(
+            email=email,
+            defaults={
+                "username": email.split("@")[0],
+                "first_name": first_name,
+                "last_name": last_name,
+            }
+        )
+
+        if created and picture:
+            try:
+                image = download_image_as_file(picture)
+
+                user.image_small = compress_image(image, size=(300, 300))
+                user.image_medium = compress_image(image, size=(800, 800))
+                user.image_large = compress_image(image, size=(1200, 1200))
+                user.save()
+            except Exception as e:
+                print("Image save error:", e)
+
+        refresh = RefreshToken.for_user(user)
+        attrs["tokens"] = {
+            "refresh": str(refresh),
+            "access": str(refresh.access_token),
+        }
+        return attrs
+
+    def create(self, validated_data):
+        return validated_data["tokens"]
