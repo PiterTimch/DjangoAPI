@@ -41,14 +41,14 @@ py manage.py migrate
 
 ```
 
-## Create app
-
-```
-py manage.py startapp app_name
-```
-
 ## Create vite react
 
 ```
 npm create vite@latest
+```
+
+## Working topic (myredit)
+
+```
+py manage.py startapp topics
 ```
