@@ -12,6 +12,8 @@ py -m pip install Django
 
 django-admin startproject atbapi
 
+pip freeze > requirements.txt
+
 pip install -r requirements.txt
 
 py manage.py runserver 9581
@@ -51,4 +53,13 @@ npm create vite@latest
 
 ```
 py manage.py startapp topics
+
+py manage.py makemigrations topics
+
+py manage.py migrate
+
+python manage.py shell
+
+from topics.seed_topics import run
+run()
 ```
