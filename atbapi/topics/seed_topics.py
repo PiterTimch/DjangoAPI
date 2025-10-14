@@ -1,4 +1,4 @@
-from django.utils.text import slugify
+from slugify import slugify
 
 from .models import Topic
 
@@ -58,21 +58,31 @@ def run():
         },
     ]
 
+    parentIndex = 1
+
     for t in topics:
-        print("Topic", t)
-        # parent, _ = Topic.objects.get_or_create(
-        #     name=t["name"],
-        #     url_slug=slugify(t["name"]),
-        #     defaults={
-        #         "description": t.get("description", ""),
-        #         "priority": 0,
-        #     },
-        # )
-        # for child_data in t.get("children", []):
-        #     Topic.objects.get_or_create(
-        #         name=child_data["name"],
-        #         url_slug=slugify(child_data["name"]),
-        #         parent=parent,
-        #         defaults={"priority": 1},
-        #     )
+        parent, _ = Topic.objects.get_or_create(
+            name=t["name"],
+            url_slug=slugify(t["name"]),
+            defaults={
+                "description": t.get("description", ""),
+                "priority": parentIndex
+            }
+        )
+
+        childrenIndex = 1
+        for child_data in t.get('children', []):
+            Topic.objects.get_or_create(
+                name=child_data["name"],
+                url_slug=slugify(child_data["name"]),
+                parent=parent,
+                defaults={
+                    "description": child_data.get("description", ""),
+                    "priority": childrenIndex
+                }
+            )
+            childrenIndex += 1
+
+        parentIndex += 1
+        
  
