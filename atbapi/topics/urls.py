@@ -3,7 +3,7 @@ from .views import TopicViewSet
 from django.urls import path, include
 
 router = DefaultRouter()
-router.register(r'topics', TopicViewSet)
+router.register(r'topics', TopicViewSet, basename='topic')
 
 urlpatterns = [
     path('', include(router.urls)),
