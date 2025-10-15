@@ -1,14 +1,14 @@
 import {createApi} from "@reduxjs/toolkit/query/react";
 import {createBaseQuery} from "../utils/createBaseQuery";
-import type {IUserItem} from "../types/users/IUserItem";
+import type {IParentTopic} from "../types/topics/IParentTopic.ts";
 
-export const userService = createApi({
+export const topicService = createApi({
     reducerPath: 'topicService',
     baseQuery: createBaseQuery('topics'),
     tagTypes: ['Topics'],
 
     endpoints: (builder) => ({
-        getTopics: builder.query<IUserItem[], void>({
+        getTopics: builder.query<IParentTopic[], void>({
             query: () => {
                 return {
                     url: '',
@@ -22,4 +22,4 @@ export const userService = createApi({
 
 export const {
     useGetTopicsQuery,
-} = userService;
+} = topicService;

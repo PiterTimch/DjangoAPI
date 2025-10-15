@@ -2,6 +2,7 @@ import { Link, Outlet, useNavigate } from "react-router";
 import { useAppSelector, useAppDispatch } from "../store";
 import { clearTokens } from "../store/authSlice";
 import {APP_ENV} from "../env";
+import TopicsSidebar from "../components/bars/TopicsSideBar";
 
 const UserLayout: React.FC = () => {
     const { user } = useAppSelector((state) => state.auth);
@@ -66,7 +67,12 @@ const UserLayout: React.FC = () => {
             </header>
 
             <main className="flex-1 p-6">
-                <Outlet />
+                <main className="flex flex-1 p-6 gap-6">
+                    <TopicsSidebar />
+                    <div className="flex-1">
+                        <Outlet />
+                    </div>
+                </main>
             </main>
 
             <footer className="w-full py-3 px-6 bg-gray-100 text-sm text-center">
