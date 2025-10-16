@@ -43,7 +43,8 @@ INSTALLED_APPS = [
     'drf_spectacular',
     'users',
     "corsheaders",
-    'topics'
+    'topics',
+    'django_filters',
 ]
 
 REST_FRAMEWORK = {
@@ -51,6 +52,7 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
+    'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend']
 }
 
 from datetime import timedelta
@@ -95,6 +97,7 @@ WSGI_APPLICATION = 'atbapi.wsgi.application'
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
+    "http://localhost:5174",
     "http://127.0.0.1:5173",
 ]
 
