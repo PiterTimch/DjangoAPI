@@ -1,6 +1,5 @@
 import { Collapse, Spin } from "antd";
 import { Link } from "react-router";
-import { useGetTopicsQuery } from "../../services/topicService.ts";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
     faHouse,
@@ -12,11 +11,12 @@ import {
     faAngleRight,
 } from "@fortawesome/free-solid-svg-icons";
 import { useState } from "react";
+import {useGetRootTopicsQuery} from "../../services/topicService.ts";
 
 const { Panel } = Collapse;
 
 const TopicsSidebar: React.FC = () => {
-    const { data: topics, isLoading, isError } = useGetTopicsQuery();
+    const { data: topics, isLoading, isError } = useGetRootTopicsQuery();
     const [collapsed, setCollapsed] = useState(false);
 
     if (isLoading) {
@@ -39,7 +39,7 @@ const TopicsSidebar: React.FC = () => {
 
     return (
         <aside
-            className={`h-screen fixed left-0 top-14 bg-gray-950 text-gray-200 flex flex-col border-r border-gray-800 overflow-y-auto px-3 py-4 transition-all duration-300 ${
+            className={`h-screen left-0 bg-gray-950 text-gray-200 flex flex-col border-r border-gray-800 overflow-y-auto px-3 py-4 transition-all duration-300 ${
                 collapsed ? "w-16" : "w-64"
             }`}
         >

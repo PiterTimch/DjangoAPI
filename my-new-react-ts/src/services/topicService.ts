@@ -16,10 +16,21 @@ export const topicService = createApi({
                 };
             },
             providesTags: ["Topics"]
-        })
+        }),
+
+        getRootTopics: builder.query<IParentTopic[], void>({
+            query: () => {
+                return {
+                    url: '?parent=null',
+                    method: 'GET'
+                };
+            },
+            providesTags: ["Topics"]
+        }),
     }),
 });
 
 export const {
     useGetTopicsQuery,
+    useGetRootTopicsQuery,
 } = topicService;
