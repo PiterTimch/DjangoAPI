@@ -7,6 +7,7 @@ import ForgotPasswordPage from "./pages/users/UserResetPasswordPage/ForgotPasswo
 import ResetPasswordPage from "./pages/users/UserResetPasswordPage/ResetPasswordPage.tsx";
 import SuccessPage from "./pages/users/UserResetPasswordPage/SuccessPage.tsx";
 import UserLayout from "./layout/UserLayout.tsx";
+import NotFoundPage from "./pages/additional/NotFoundPage.tsx";
 
 
 function App() {
@@ -22,6 +23,8 @@ function App() {
                     <Route path="reset-password/:uid/:token" element={<ResetPasswordPage />} />
                     <Route path={"success-confirm"} element={<SuccessPage />} />
                 </Route>
+
+                <Route path="*" element={<NotFoundPage/>} />
             </Routes>
 
         </>

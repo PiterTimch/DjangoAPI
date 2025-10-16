@@ -3,6 +3,8 @@ import { useAppSelector, useAppDispatch } from "../store";
 import { clearTokens } from "../store/authSlice";
 import {APP_ENV} from "../env";
 import TopicsSidebar from "../components/bars/TopicsSideBar";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faReddit} from "@fortawesome/free-brands-svg-icons";
 
 const UserLayout: React.FC = () => {
     const { user } = useAppSelector((state) => state.auth);
@@ -15,11 +17,12 @@ const UserLayout: React.FC = () => {
     };
 
     return (
-        <div className="min-h-screen flex flex-col bg-white">
-            <header className="w-full py-4 px-6 bg-gray-500 text-white shadow-md flex justify-between items-center">
-                <div className="hidden items-center gap-4 lg:flex">
-                    <Link to="/" className="text-xl font-semibold">
-                        PDA Test
+        <div className="min-h-screen flex flex-col bg-gray-950 text-white">
+            <header className="w-full py-2 px-6 bg-gray-900 shadow-md flex justify-between items-center">
+                <div className="hidden items-center gap-1 lg:flex">
+                    <FontAwesomeIcon className={'text-4xl text-purple-500'} icon={faReddit} />
+                    <Link to="/" className="text-2xl font-semibold font-['Comic_Sans_MS']">
+                        reddka
                     </Link>
                 </div>
 
@@ -51,13 +54,13 @@ const UserLayout: React.FC = () => {
                         <>
                             <Link
                                 to="/login"
-                                className="bg-white text-gray-500 px-4 py-2 rounded hover:bg-gray-100 transition"
+                                className="bg-purple-500 px-4 py-2 rounded-full hover:bg-purple-800 transition"
                             >
-                                Вхід
+                                Log In
                             </Link>
                             <Link
                                 to="/register"
-                                className="bg-white text-gray-500 px-4 py-2 rounded hover:bg-gray-100 transition"
+                                className="bg-gray-600 px-4 py-2 rounded-full hover:bg-gray-700 transition"
                             >
                                 Реєстрація
                             </Link>
@@ -66,16 +69,15 @@ const UserLayout: React.FC = () => {
                 </div>
             </header>
 
-            <main className="flex-1 p-6">
-                <main className="flex flex-1 p-6 gap-6">
-                    <TopicsSidebar />
-                    <div className="flex-1">
-                        <Outlet />
-                    </div>
-                </main>
+            <main className="flex flex-1 p-6 gap-6">
+                <TopicsSidebar />
+                <div className="flex-1 ml-64">
+                    <Outlet />
+                </div>
             </main>
 
-            <footer className="w-full py-3 px-6 bg-gray-100 text-sm text-center">
+
+            <footer className="w-full py-3 px-6 text-sm text-center">
                 © 2025 PDA (Python Django API) Test. Усі права захищено.
             </footer>
         </div>
