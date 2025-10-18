@@ -10,21 +10,19 @@ import {
     faAngleLeft,
     faAngleRight,
 } from "@fortawesome/free-solid-svg-icons";
-import { useContext, useState } from "react";
+import { useState } from "react";
 import {useGetRootTopicsQuery} from "../../services/topicService.ts";
 import TopicSideBarRow from "./TopicSidebarRow.tsx";
-import { ThemeContext } from "../../layout/ThemeContext";
 
 // const { Panel } = Collapse;
 
 const TopicsSidebar: React.FC = () => {
     const { data: topics, isLoading, isError } = useGetRootTopicsQuery();
     const [collapsed, setCollapsed] = useState(false);
-    const { theme } = useContext(ThemeContext);
 
     if (isLoading) {
         return (
-            <div className={theme === "dark" ? "flex justify-center items-center py-6 bg-gray-950 text-gray-200 h-screen" : "flex justify-center items-center py-6 bg-white text-gray-900 h-screen"}>
+            <div className="flex justify-center items-center py-6 bg-gray-950 text-gray-200 h-screen">
                 <Spin size="large" />
             </div>
         );
@@ -32,7 +30,7 @@ const TopicsSidebar: React.FC = () => {
 
     if (isError || !topics) {
         return (
-            <div className={theme === "dark" ? "text-gray-400 p-4 bg-gray-950 h-screen" : "text-gray-600 p-4 bg-white h-screen"}>
+            <div className="text-gray-400 p-4 bg-gray-950 h-screen">
                 Не вдалося завантажити топіки
             </div>
         );
@@ -42,9 +40,8 @@ const TopicsSidebar: React.FC = () => {
 
     return (
         <aside
-            className={`h-screen left-0 ${theme === "dark" ? "bg-gray-950 text-gray-200 border-gray-800" : "bg-white text-gray-900 border-gray-200"} flex flex-col border-r overflow-y-auto px-3 py-4 transition-all duration-300 ${
-                collapsed ? "w-16" : "w-64"
-            }`}
+            className={`h-screen left-0 bg-gray-950 text-gray-200 flex flex-col border-r border-gray-800 overflow-y-auto px-3 py-4 transition-all duration-300 ${
+                collapsed ? "w-16" : "w-64"}`}
         >
             <div className="flex justify-end">
                 <button
@@ -58,7 +55,7 @@ const TopicsSidebar: React.FC = () => {
             <nav className="space-y-1 mb-6">
                 <Link
                     to="/"
-                    className={`flex items-center gap-3 py-2 px-3 rounded-md transition ${theme === "dark" ? "hover:bg-[#1a1a1b]" : "hover:bg-gray-100"}`}
+                    className="flex items-center gap-3 py-2 px-3 rounded-md hover:bg-[#1a1a1b] transition"
                 >
                     <FontAwesomeIcon icon={faHouse} className="w-4 h-4 text-gray-300" />
                     {!collapsed && <span className="text-sm font-medium">Home</span>}
@@ -66,7 +63,7 @@ const TopicsSidebar: React.FC = () => {
 
                 <Link
                     to="/popular"
-                    className={`flex items-center gap-3 py-2 px-3 rounded-md transition ${theme === "dark" ? "hover:bg-[#1a1a1b]" : "hover:bg-gray-100"}`}
+                    className="flex items-center gap-3 py-2 px-3 rounded-md hover:bg-[#1a1a1b] transition"
                 >
                     <FontAwesomeIcon icon={faFire} className="w-4 h-4 text-gray-300" />
                     {!collapsed && <span className="text-sm font-medium">Popular</span>}
@@ -74,7 +71,7 @@ const TopicsSidebar: React.FC = () => {
 
                 <Link
                     to="/answers"
-                    className={`flex items-center gap-3 py-2 px-3 rounded-md transition ${theme === "dark" ? "hover:bg-[#1a1a1b]" : "hover:bg-gray-100"}`}
+                    className="flex items-center gap-3 py-2 px-3 rounded-md hover:bg-[#1a1a1b] transition"
                 >
                     <FontAwesomeIcon icon={faComments} className="w-4 h-4 text-gray-300" />
                     {!collapsed && (
@@ -86,7 +83,7 @@ const TopicsSidebar: React.FC = () => {
 
                 <Link
                     to="/explore"
-                    className={`flex items-center gap-3 py-2 px-3 rounded-md transition ${theme === "dark" ? "hover:bg-[#1a1a1b]" : "hover:bg-gray-100"}`}
+                    className="flex items-center gap-3 py-2 px-3 rounded-md hover:bg-[#1a1a1b] transition"
                 >
                     <FontAwesomeIcon icon={faCompass} className="w-4 h-4 text-gray-300" />
                     {!collapsed && <span className="text-sm font-medium">Explore</span>}
@@ -96,7 +93,7 @@ const TopicsSidebar: React.FC = () => {
             <div className="border-t border-gray-800 mb-4"></div>
 
             {!collapsed && (
-                <span className={theme === "dark" ? "uppercase text-[11px] tracking-wider text-gray-500 font-semibold mb-2 px-3" : "uppercase text-[11px] tracking-wider text-gray-500 font-semibold mb-2 px-3"}>
+                <span className="uppercase text-[11px] tracking-wider text-gray-500 font-semibold mb-2 px-3">
                     Topics
                 </span>
             )}
@@ -115,49 +112,6 @@ const TopicsSidebar: React.FC = () => {
                         <TopicSideBarRow key={topic.id} topic={topic} />
                     ))}
                 </div>
-
-                {/*<Collapse*/}
-                {/*    ghost*/}
-                {/*    accordion={false}*/}
-                {/*    expandIconPosition="end"*/}
-                {/*    expandIcon={({ isActive }) => (*/}
-                {/*        <FontAwesomeIcon*/}
-                {/*            icon={faChevronDown}*/}
-                {/*            className={`text-xs transition-transform duration-200 ${*/}
-                {/*                isActive ? "rotate-180 text-gray-300" : "text-gray-500"*/}
-                {/*            }`}*/}
-                {/*        />*/}
-                {/*    )}*/}
-                {/*>*/}
-                {/*    {topics.map((topic) => (*/}
-                {/*        <Panel*/}
-                {/*            key={topic.id}*/}
-                {/*            header={*/}
-                {/*                <span className="text-gray-200 text-[13px] font-medium">*/}
-                {/*                    {topic.name}*/}
-                {/*                </span>*/}
-                {/*            }*/}
-                {/*            className="!bg-transparent !border-0 !text-gray-300 hover:!bg-[#1a1a1b] rounded-md"*/}
-                {/*        >*/}
-                {/*            {topic.children && topic.children.length > 0 ? (*/}
-                {/*                <ul className="pl-2 space-y-1">*/}
-                {/*                    {topic.children.map((child) => (*/}
-                {/*                        <li key={child.id}>*/}
-                {/*                            <Link*/}
-                {/*                                to={`/topics/${child.url_slug}`}*/}
-                {/*                                className="!text-gray-400 hover:text-gray-200 text-[13px] transition"*/}
-                {/*                            >*/}
-                {/*                                {child.name}*/}
-                {/*                            </Link>*/}
-                {/*                        </li>*/}
-                {/*                    ))}*/}
-                {/*                </ul>*/}
-                {/*            ) : (*/}
-                {/*                <span className="text-gray-500 text-xs">Немає підтем</span>*/}
-                {/*            )}*/}
-                {/*        </Panel>*/}
-                {/*    ))}*/}
-                {/*</Collapse>*/}
 
                 <div className="mt-3 px-3">
                     <button className="text-gray-400 text-sm hover:text-gray-200 transition">

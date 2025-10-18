@@ -6,17 +6,12 @@ import {APP_ENV} from "../env";
 import TopicsSidebar from "../components/bars/TopicsSideBar";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faReddit} from "@fortawesome/free-brands-svg-icons";
-import { faMoon, faSun } from "@fortawesome/free-solid-svg-icons";
-import { ThemeContext } from "./ThemeContext";
-import type { ThemeMode } from "./ThemeContext";
+import {ThemeToggleButton} from "../components/buttons/ThemeToggleButton.tsx";
 
 const UserLayout: React.FC = () => {
     const { user } = useAppSelector((state) => state.auth);
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
-
-    const [theme, setTheme] = React.useState<ThemeMode>("dark");
-    const toggleTheme = () => setTheme((prev) => (prev === "dark" ? "light" : "dark"));
 
     const handleLogout = () => {
         dispatch(clearTokens());
@@ -24,8 +19,7 @@ const UserLayout: React.FC = () => {
     };
 
     return (
-        <ThemeContext.Provider value={{ theme, toggleTheme }}>
-        <div className={theme === "dark" ? "min-h-screen flex flex-col bg-gray-950 text-white" : "min-h-screen flex flex-col bg-white text-gray-900"}>
+        <div className="min-h-screen flex flex-col bg-gray-950 text-white">
             <header className="w-full py-2 px-6 bg-gray-900 shadow-md flex justify-between items-center">
                 <div className="hidden items-center gap-1 lg:flex">
                     <FontAwesomeIcon className={'text-4xl text-purple-500'} icon={faReddit} />
@@ -34,11 +28,9 @@ const UserLayout: React.FC = () => {
                     </Link>
                 </div>
 
+                <ThemeToggleButton />
+
                 <div className="flex items-center gap-4">
-                    <button onClick={toggleTheme} className="flex items-center gap-2 px-3 py-2 rounded border border-gray-700 text-sm hover:bg-gray-800" aria-label="Toggle theme">
-                        <FontAwesomeIcon icon={theme === "dark" ? faSun : faMoon} />
-                        <span className="hidden sm:inline">{theme === "dark" ? "Light" : "Dark"}</span>
-                    </button>
                     {user ? (
                         <>
                             <div className="flex items-center gap-3">
@@ -93,7 +85,6 @@ const UserLayout: React.FC = () => {
                 © 2025 PDA (Python Django API) Test. Усі права захищено.
             </footer>
         </div>
-        </ThemeContext.Provider>
     );
 };
 

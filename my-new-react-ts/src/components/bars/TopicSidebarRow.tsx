@@ -1,51 +1,54 @@
-import React, { useContext } from "react";
-import type {IParentTopic} from "../../types/topics/IParentTopic.ts";
-import { Link } from "react-router";
-import { ThemeContext } from "../../layout/ThemeContext";
+import React, {useState} from "react";
+import type {IParentTopic} from "../../types/topics/IParentTopic";
+import {Link} from "react-router";
 
 interface Props {
     topic: IParentTopic;
 }
 
 const TopicSideBarRow: React.FC<Props> = ({topic}) => {
-    const [isCollapse, setisCollapse] = React.useState(true);
-    const { theme } = useContext(ThemeContext);
-
+    const {name} = topic;
+    const [isCollapse, setIsCollapse] = useState(false);
     const toggleCollapse = () => {
-        setisCollapse(!isCollapse);
+        setIsCollapse(!isCollapse);
     }
-
     return (
-        <div className="mb-2">
-            <button
-                type="button"
-                className={`flex items-center justify-between w-full py-2 px-3 text-sm rounded-md transition ${theme === "dark" ? "text-gray-300 hover:bg-[#1a1a1b]" : "text-gray-800 hover:bg-gray-100"}`}
-                onClick={toggleCollapse}
-                aria-expanded={isCollapse}
-            >
-                <span className="font-medium">{topic.name}</span>
-                <span className={`text-xs ${theme === "dark" ? "text-gray-500" : "text-gray-400"}`}>{isCollapse ? "▲" : "▼"}</span>
-            </button>
+        <>
+            <h2 id="accordion-open-heading-1" onClick={toggleCollapse}>
+                <button type="button"
+                        className="flex items-center justify-between w-full p-5 font-medium rtl:text-right text-gray-500 border border-b-0 border-gray-200 rounded-t-xl focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-800 dark:border-gray-700 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 gap-3"
+                        data-accordion-target="#accordion-open-body-1" aria-expanded="true"
+                        aria-controls="accordion-open-body-1">
+                    <span className="flex items-center">{name}</span>
+                    <svg data-accordion-icon className="w-3 h-3 rotate-180 shrink-0" aria-hidden="true"
+                         xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                              stroke-width="2" d="M9 5 5 1 1 5"/>
+                    </svg>
+                </button>
+            </h2>
+            <div id="accordion-open-body-1" className={isCollapse ? "block" : "hidden"}
+                 aria-labelledby="accordion-open-heading-1">
+                {topic.children && topic.children.length > 0 ? (
+                        <ul className="space-y-4 sm:mb-4 md:mb-0" aria-labelledby="mega-menu-full-cta-button">
+                            {topic.children.map((child) => (
 
-            {isCollapse && (
-                <ul className="mt-1 ml-3 space-y-1">
-                    {topic.children && topic.children.length > 0 ? (
-                        topic.children.map((child) => (
-                            <li key={child.id}>
-                                <Link
-                                    to={`/topics/${child.url_slug}`}
-                                    className={theme === "dark" ? "block text-gray-400 hover:text-gray-200 text-[13px]" : "block text-gray-700 hover:text-gray-900 text-[13px]"}
-                                >
-                                    {child.name}
-                                </Link>
-                            </li>
-                        ))
-                    ) : (
-                        <li className={theme === "dark" ? "text-gray-500 text-xs" : "text-gray-400 text-xs"}>Немає підтем</li>
+                                    <li key={child.id}>
+                                        <Link to={`/topics/${child.url_slug}`} className="hover:underline hover:text-blue-600 dark:hover:text-blue-500">
+                                            {child.name}
+                                        </Link>
+                                    </li>
+                                )
+                            )}
+
+                        </ul>
+                    )
+                    : (
+                        <span className="text-gray-500 text-xs">Немає підтем</span>
                     )}
-                </ul>
-            )}
-        </div>
+
+            </div>
+        </>
     )
 }
 
