@@ -8,6 +8,7 @@ import {useGoogleReCaptcha} from "react-google-recaptcha-v3";
 import {useGoogleLogin} from "@react-oauth/google";
 import type {IGoogleLoginRequest} from "../../types/users/IGoogleLoginRequest.ts";
 import InputField from "../inputs/InputField.tsx";
+import {useState} from "react";
 
 const LoginForm: React.FC = () => {
     const [form] = Form.useForm();
@@ -30,6 +31,16 @@ const LoginForm: React.FC = () => {
             }
         },
     });
+
+    const [errors, setErrors] = useState<string[]>([]);
+
+    const validationChange = (isValid: boolean, fieldKey: string) => {
+        if (isValid && errors.includes(fieldKey)) {
+            setErrors(errors.filter(x => x !== fieldKey))
+        } else if (!isValid && !errors.includes(fieldKey)) {
+            setErrors(state => [...state, fieldKey])
+        }
+    };
 
     const onFinish: FormProps<ILoginRequest>["onFinish"] = async (values) => {
         if (!executeRecaptcha) return;
@@ -60,7 +71,20 @@ const LoginForm: React.FC = () => {
                     type="password"
                     label="Password"
                     name="password"
-                    placeholder="********"/>
+                    placeholder="********"
+                    rules={[
+                        {
+                            rule: 'required',
+                            message: "Пошта є обов'язкова"
+                        },
+                        {
+                            rule: 'regexp',
+                            value: '^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$',
+                            message: "Пошта є некоректна"
+                        }
+                    ]}
+                    onValidationChange={validationChange}
+                />
             </div>
 
 
