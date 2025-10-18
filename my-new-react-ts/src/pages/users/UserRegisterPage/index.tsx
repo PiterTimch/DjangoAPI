@@ -15,6 +15,7 @@ const UserRegisterPage: React.FC = () => {
                 background: "#f5f5f5",
                 padding: "20px",
             }}
+            className="dark:bg-gray-900"
         >
             <Card
                 style={{
@@ -24,9 +25,10 @@ const UserRegisterPage: React.FC = () => {
                     overflow: "hidden",
                     boxShadow: "0 4px 20px rgba(0,0,0,0.1)",
                 }}
+                className="dark:shadow-gray-800"
             >
                 <Row>
-                    <Col xs={0} md={12} style={{ background: "#1677ff", padding: "60px 40px" }}>
+                    <Col xs={0} md={12} style={{ background: "#1677ff", padding: "60px 40px" }} className="dark:bg-purple-600">
                         <Title level={2} style={{ color: "white" }}>
                             Welcome!
                         </Title>

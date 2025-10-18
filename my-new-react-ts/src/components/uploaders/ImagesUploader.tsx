@@ -70,7 +70,7 @@ const ImageUploader: React.FC<Props> = ({
             )}
 
             {imageError && (
-                <div className="text-red-500 text-sm mt-1">
+                <div className="text-red-500 dark:text-red-400 text-sm mt-1">
                     Оберіть зображення категорії
                 </div>
             )}

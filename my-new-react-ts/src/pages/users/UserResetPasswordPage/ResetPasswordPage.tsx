@@ -15,6 +15,7 @@ const ResetPasswordPage: React.FC = () => {
                 background: "#f5f5f5",
                 padding: "20px",
             }}
+            className="dark:bg-gray-900"
         >
             <Card
                 style={{
@@ -24,6 +25,7 @@ const ResetPasswordPage: React.FC = () => {
                     overflow: "hidden",
                     boxShadow: "0 4px 20px rgba(0,0,0,0.1)",
                 }}
+                className="dark:shadow-gray-800"
             >
                 <Row>
                     <div style={{ textAlign: "center", marginBottom: 24 }}>

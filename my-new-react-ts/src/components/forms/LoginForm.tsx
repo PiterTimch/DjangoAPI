@@ -73,7 +73,7 @@ const LoginForm: React.FC = () => {
                 <Input.Password placeholder="********" />
             </Form.Item>
 
-            <Link to="/forgot-password">Forgot password?</Link>
+            <Link to="/forgot-password" className="text-purple-600 dark:text-purple-400 hover:text-purple-800 dark:hover:text-purple-300">Forgot password?</Link>
 
             <Form.Item>
                 <Button
