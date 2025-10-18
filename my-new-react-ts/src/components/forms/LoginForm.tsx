@@ -5,22 +5,22 @@ import {setTokens} from "../../store/authSlice.ts";
 import {Link, useNavigate} from "react-router";
 import type {ILoginRequest} from "../../types/users/ILoginRequest.ts";
 import {useGoogleReCaptcha} from "react-google-recaptcha-v3";
-import { useGoogleLogin } from "@react-oauth/google";
+import {useGoogleLogin} from "@react-oauth/google";
 import type {IGoogleLoginRequest} from "../../types/users/IGoogleLoginRequest.ts";
+import InputField from "../inputs/InputField.tsx";
 
 const LoginForm: React.FC = () => {
     const [form] = Form.useForm();
-    const [login, { isLoading }] = useLoginMutation();
+    const [login, {isLoading}] = useLoginMutation();
     const dispatch = useDispatch();
     const navigate = useNavigate();
-    const { executeRecaptcha } = useGoogleReCaptcha();
-    const [loginByGoogle, { isLoading: isGoogleLoading }] = useLoginByGoogleMutation();
+    const {executeRecaptcha} = useGoogleReCaptcha();
+    const [loginByGoogle, {isLoading: isGoogleLoading}] = useLoginByGoogleMutation();
 
     const loginUseGoogle = useGoogleLogin({
-        onSuccess: async (tokenResponse) =>
-        {
+        onSuccess: async (tokenResponse) => {
             try {
-                const model : IGoogleLoginRequest = { token: tokenResponse.access_token };
+                const model: IGoogleLoginRequest = {token: tokenResponse.access_token};
 
                 const result = await loginByGoogle(model).unwrap();
                 dispatch(setTokens(result));
@@ -35,7 +35,7 @@ const LoginForm: React.FC = () => {
         if (!executeRecaptcha) return;
 
         const token = await executeRecaptcha('login');
-        const payload : ILoginRequest = { ...values, recaptcha_token: token };
+        const payload: ILoginRequest = {...values, recaptcha_token: token};
 
         try {
             const result = await login(payload).unwrap();
@@ -49,57 +49,75 @@ const LoginForm: React.FC = () => {
     };
 
     return (
-        <Form
-            form={form}
-            layout="vertical"
-            onFinish={onFinish}
-            style={{ width: "100%" }}
-        >
-            <Form.Item
-                label="User name"
-                name="username"
-                rules={[
-                    { required: true, message: "Please enter your email" }
-                ]}
+        <>
+            <div>
+                <InputField
+                    label="Username"
+                    name="username"
+                    placeholder="pedro"/>
+
+                <InputField
+                    type="password"
+                    label="Password"
+                    name="password"
+                    placeholder="********"/>
+            </div>
+
+
+            <Form
+                form={form}
+                layout="vertical"
+                onFinish={onFinish}
+                style={{width: "100%"}}
             >
-                <Input placeholder="johnsmith" />
-            </Form.Item>
-
-            <Form.Item
-                label="Password"
-                name="password"
-                rules={[{ required: true, message: "Please enter your password" }]}
-            >
-                <Input.Password placeholder="********" />
-            </Form.Item>
-
-            <Link to="/forgot-password" className="text-purple-600 dark:text-purple-400 hover:text-purple-800 dark:hover:text-purple-300">Forgot password?</Link>
-
-            <Form.Item>
-                <Button
-                    type="primary"
-                    htmlType="submit"
-                    loading={isLoading || isGoogleLoading}
-                    block
-                    style={{ height: "40px", fontWeight: 600 }}
+                <Form.Item
+                    label="User name"
+                    name="username"
+                    rules={[
+                        {required: true, message: "Please enter your email"}
+                    ]}
                 >
-                    Login
-                </Button>
-            </Form.Item>
+                    <Input placeholder="johnsmith"/>
+                </Form.Item>
 
-            <Form.Item>
-                <Button
-                    type="primary"
-                    onClick={(event) =>  {
-                        event.preventDefault();
-                        loginUseGoogle();
-                    }}
-                    className="w-full bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-lg transition"
+                <Form.Item
+                    label="Password"
+                    name="password"
+                    rules={[{required: true, message: "Please enter your password"}]}
                 >
-                    Увійти Google
-                </Button>
-            </Form.Item>
-        </Form>
+                    <Input.Password placeholder="********"/>
+                </Form.Item>
+
+                <Link to="/forgot-password"
+                      className="text-purple-600 dark:text-purple-400 hover:text-purple-800 dark:hover:text-purple-300">Forgot
+                    password?</Link>
+
+                <Form.Item>
+                    <Button
+                        type="primary"
+                        htmlType="submit"
+                        loading={isLoading || isGoogleLoading}
+                        block
+                        style={{height: "40px", fontWeight: 600}}
+                    >
+                        Login
+                    </Button>
+                </Form.Item>
+
+                <Form.Item>
+                    <Button
+                        type="primary"
+                        onClick={(event) => {
+                            event.preventDefault();
+                            loginUseGoogle();
+                        }}
+                        className="w-full bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-lg transition"
+                    >
+                        Увійти Google
+                    </Button>
+                </Form.Item>
+            </Form>
+        </>
     );
 };
 

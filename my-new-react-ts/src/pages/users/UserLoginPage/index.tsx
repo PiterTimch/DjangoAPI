@@ -1,49 +1,25 @@
 import React from "react";
-import {Typography, Card, Row, Col} from "antd";
 import LoginForm from "../../../components/forms/LoginForm.tsx";
-
-const { Title, Text } = Typography;
 
 const UserLoginPage: React.FC = () => {
     return (
-        <div
-            style={{
-                minHeight: "100vh",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                background: "#f5f5f5",
-                padding: "20px",
-            }}
-            className="dark:bg-gray-900"
-        >
-            <Card
-                style={{
-                    maxWidth: 900,
-                    width: "100%",
-                    borderRadius: "16px",
-                    overflow: "hidden",
-                    boxShadow: "0 4px 20px rgba(0,0,0,0.1)",
-                }}
-                className="dark:shadow-gray-800"
-            >
-                <Row>
-                    <Col xs={0} md={12} style={{ background: "#1677ff", padding: "60px 40px" }} className="dark:bg-purple-600">
-                        <Title level={2} style={{ color: "white" }}>
-                            Welcome!
-                        </Title>
-                    </Col>
-                    <Col xs={24} md={12} style={{ padding: "40px" }}>
-                        <div style={{ textAlign: "center", marginBottom: 24 }}>
-                            <Title level={3} style={{ marginBottom: 0 }}>
-                                Login
-                            </Title>
-                            <Text>Enter your information to login</Text>
+        <div className={"p-[20px] min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900"}>
+            <div className="max-w-[900px] w-full rounded-2xl overflow-hidden shadow-[0_4px_20px_rgba(0,0,0,0.1)] dark:shadow-gray-800">
+                <div className="grid md:grid-cols-2 grid-rows-2 md:grid-rows-1 min-h-screen">
+                    <div className="bg-purple-600 p-[60px_40px] hidden md:flex flex-col justify-center">
+                        <h2 className="text-white text-3xl font-semibold mb-4">Welcome!</h2>
+                    </div>
+
+                    <div className="p-10 flex flex-col justify-center">
+                        <div className="text-center mb-6">
+                            <h3 className="text-2xl font-semibold mb-1">Login</h3>
+                            <p className="text-gray-500">Enter your information to login</p>
                         </div>
                         <LoginForm />
-                    </Col>
-                </Row>
-            </Card>
+                    </div>
+                </div>
+
+            </div>
         </div>
     );
 };
