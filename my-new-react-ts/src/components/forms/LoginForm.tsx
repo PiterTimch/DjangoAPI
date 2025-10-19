@@ -1,147 +1,122 @@
-import {Form, Input, Button, type FormProps} from "antd";
-import {useLoginByGoogleMutation, useLoginMutation} from "../../services/userService.ts";
-import {useDispatch} from "react-redux";
-import {setTokens} from "../../store/authSlice.ts";
-import {Link, useNavigate} from "react-router";
-import type {ILoginRequest} from "../../types/users/ILoginRequest.ts";
-import {useGoogleReCaptcha} from "react-google-recaptcha-v3";
-import {useGoogleLogin} from "@react-oauth/google";
-import type {IGoogleLoginRequest} from "../../types/users/IGoogleLoginRequest.ts";
+import { useState } from "react";
+import { useDispatch } from "react-redux";
+import { Link, useNavigate } from "react-router";
+import { useGoogleReCaptcha } from "react-google-recaptcha-v3";
+import { useGoogleLogin } from "@react-oauth/google";
+
+import { useLoginMutation, useLoginByGoogleMutation } from "../../services/userService.ts";
+import { setTokens } from "../../store/authSlice.ts";
 import InputField from "../inputs/InputField.tsx";
-import {useState} from "react";
+import BaseButton from "../buttons/BaseButton.tsx";
+import type { ILoginRequest } from "../../types/users/ILoginRequest.ts";
+import type { IGoogleLoginRequest } from "../../types/users/IGoogleLoginRequest.ts";
 
 const LoginForm: React.FC = () => {
-    const [form] = Form.useForm();
-    const [login, {isLoading}] = useLoginMutation();
     const dispatch = useDispatch();
     const navigate = useNavigate();
-    const {executeRecaptcha} = useGoogleReCaptcha();
-    const [loginByGoogle, {isLoading: isGoogleLoading}] = useLoginByGoogleMutation();
+    const { executeRecaptcha } = useGoogleReCaptcha();
+
+    const [login, { isLoading }] = useLoginMutation();
+    const [loginByGoogle, { isLoading: isGoogleLoading }] = useLoginByGoogleMutation();
+
+    const [formValues, setFormValues] = useState<{ username: string; password: string }>({
+        username: "",
+        password: "",
+    });
+
+    const [errors, setErrors] = useState<string[]>([]);
 
     const loginUseGoogle = useGoogleLogin({
         onSuccess: async (tokenResponse) => {
             try {
-                const model: IGoogleLoginRequest = {token: tokenResponse.access_token};
-
+                const model: IGoogleLoginRequest = { token: tokenResponse.access_token };
                 const result = await loginByGoogle(model).unwrap();
                 dispatch(setTokens(result));
-                navigate('/');
+                navigate("/");
             } catch (error) {
                 console.error(error);
             }
         },
     });
 
-    const [errors, setErrors] = useState<string[]>([]);
-
     const validationChange = (isValid: boolean, fieldKey: string) => {
         if (isValid && errors.includes(fieldKey)) {
-            setErrors(errors.filter(x => x !== fieldKey))
+            setErrors(errors.filter((x) => x !== fieldKey));
         } else if (!isValid && !errors.includes(fieldKey)) {
-            setErrors(state => [...state, fieldKey])
+            setErrors((state) => [...state, fieldKey]);
         }
     };
 
-    const onFinish: FormProps<ILoginRequest>["onFinish"] = async (values) => {
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setFormValues({ ...formValues, [e.target.name]: e.target.value });
+    };
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
         if (!executeRecaptcha) return;
 
-        const token = await executeRecaptcha('login');
-        const payload: ILoginRequest = {...values, recaptcha_token: token};
+        const token = await executeRecaptcha("login");
+        const payload: ILoginRequest = { ...formValues, recaptcha_token: token };
+
+        console.log(payload);
 
         try {
             const result = await login(payload).unwrap();
-            console.log(result);
             dispatch(setTokens(result));
-            navigate('/');
+            navigate("/");
         } catch (err: any) {
-            const errorMessage = err?.data?.errors?.Name?.[0];
-            console.error(errorMessage);
+            console.error(err?.data?.errors);
         }
     };
 
     return (
-        <>
-            <div>
-                <InputField
-                    label="Username"
-                    name="username"
-                    placeholder="pedro"/>
+        <form onSubmit={handleSubmit} className="space-y-4">
+            <InputField
+                label="Username"
+                name="username"
+                placeholder="pedro"
+                value={formValues.username}
+                onChange={handleChange}
+                onValidationChange={validationChange}
+                rules={[{ rule: "required", message: "Username is required" }]}
+            />
 
-                <InputField
-                    type="password"
-                    label="Password"
-                    name="password"
-                    placeholder="********"
-                    rules={[
-                        {
-                            rule: 'required',
-                            message: "Пошта є обов'язкова"
-                        },
-                        {
-                            rule: 'regexp',
-                            value: '^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$',
-                            message: "Пошта є некоректна"
-                        }
-                    ]}
-                    onValidationChange={validationChange}
-                />
-            </div>
+            <InputField
+                label="Password"
+                type="password"
+                name="password"
+                placeholder="********"
+                value={formValues.password}
+                onChange={handleChange}
+                onValidationChange={validationChange}
+                rules={[{ rule: "required", message: "Password is required" }]}
+            />
 
-
-            <Form
-                form={form}
-                layout="vertical"
-                onFinish={onFinish}
-                style={{width: "100%"}}
+            <Link
+                to="/forgot-password"
+                className="block text-sm text-purple-600 dark:text-purple-400 hover:text-purple-800 dark:hover:text-purple-300"
             >
-                <Form.Item
-                    label="User name"
-                    name="username"
-                    rules={[
-                        {required: true, message: "Please enter your email"}
-                    ]}
-                >
-                    <Input placeholder="johnsmith"/>
-                </Form.Item>
+                Forgot password?
+            </Link>
 
-                <Form.Item
-                    label="Password"
-                    name="password"
-                    rules={[{required: true, message: "Please enter your password"}]}
-                >
-                    <Input.Password placeholder="********"/>
-                </Form.Item>
+            <BaseButton
+                type="submit"
+                className="w-full font-medium py-2"
+            >
+                {isLoading ? "Loading..." : "Login"}
+            </BaseButton>
 
-                <Link to="/forgot-password"
-                      className="text-purple-600 dark:text-purple-400 hover:text-purple-800 dark:hover:text-purple-300">Forgot
-                    password?</Link>
-
-                <Form.Item>
-                    <Button
-                        type="primary"
-                        htmlType="submit"
-                        loading={isLoading || isGoogleLoading}
-                        block
-                        style={{height: "40px", fontWeight: 600}}
-                    >
-                        Login
-                    </Button>
-                </Form.Item>
-
-                <Form.Item>
-                    <Button
-                        type="primary"
-                        onClick={(event) => {
-                            event.preventDefault();
-                            loginUseGoogle();
-                        }}
-                        className="w-full bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-lg transition"
-                    >
-                        Увійти Google
-                    </Button>
-                </Form.Item>
-            </Form>
-        </>
+            <BaseButton
+                type="button"
+                onClick={(e) => {
+                    e.preventDefault();
+                    loginUseGoogle();
+                }}
+                className="w-full bg-blue-500 hover:bg-blue-600 text-white font-medium py-2"
+            >
+                {isGoogleLoading ? "Loading..." : "Login with Google"}
+            </BaseButton>
+        </form>
     );
 };
 
