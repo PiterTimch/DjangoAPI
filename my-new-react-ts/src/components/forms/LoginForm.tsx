@@ -19,7 +19,7 @@ const LoginForm: React.FC = () => {
     const [login, { isLoading }] = useLoginMutation();
     const [loginByGoogle, { isLoading: isGoogleLoading }] = useLoginByGoogleMutation();
 
-    const [formValues, setFormValues] = useState<{ username: string; password: string }>({
+    const [formValues, setFormValues] = useState<ILoginRequest>({
         username: "",
         password: "",
     });
@@ -101,7 +101,7 @@ const LoginForm: React.FC = () => {
 
             <BaseButton
                 type="submit"
-                className="w-full font-medium py-2"
+                className="w-full rounded-xl !bg-purple-500 dark:!bg-gray-900 text-white font-medium py-2"
             >
                 {isLoading ? "Loading..." : "Login"}
             </BaseButton>
@@ -112,7 +112,7 @@ const LoginForm: React.FC = () => {
                     e.preventDefault();
                     loginUseGoogle();
                 }}
-                className="w-full bg-blue-500 hover:bg-blue-600 text-white font-medium py-2"
+                className="w-full rounded-xl font-medium py-2"
             >
                 {isGoogleLoading ? "Loading..." : "Login with Google"}
             </BaseButton>
