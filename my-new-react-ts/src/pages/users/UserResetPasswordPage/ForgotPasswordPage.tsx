@@ -1,42 +1,20 @@
 import React from "react";
-import {Typography, Card, Row} from "antd";
 import ResetPasswordRequestForm from "../../../components/forms/ResetPasswordRequestForm.tsx";
-
-const { Title, Text } = Typography;
 
 const ForgotPasswordPage: React.FC = () => {
     return (
-        <div
-            style={{
-                minHeight: "100vh",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                background: "#f5f5f5",
-                padding: "20px",
-            }}
-            className="dark:bg-gray-900"
-        >
-            <Card
-                style={{
-                    maxWidth: 900,
-                    width: "100%",
-                    borderRadius: "16px",
-                    overflow: "hidden",
-                    boxShadow: "0 4px 20px rgba(0,0,0,0.1)",
-                }}
-                className="dark:shadow-gray-800"
-            >
-                <Row>
-                    <div style={{ textAlign: "center", marginBottom: 24 }}>
-                        <Title level={3} style={{ marginBottom: 0 }}>
-                            Forgot Password?
-                        </Title>
-                        <Text>Enter your information to reset</Text>
+        <div className="p-5 min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
+            <div className="max-w-[600px] w-full rounded-2xl overflow-hidden shadow-[0_4px_20px_rgba(0,0,0,0.1)] dark:shadow-gray-800">
+                <div className="p-6 md:p-10 flex flex-col justify-center">
+                    <div className="text-center mb-6">
+                        <h3 className="text-2xl font-semibold mb-1">Forgot password</h3>
+                        <p className="text-gray-500 dark:text-gray-400">
+                            Enter your email to reset your password
+                        </p>
                     </div>
                     <ResetPasswordRequestForm />
-                </Row>
-            </Card>
+                </div>
+            </div>
         </div>
     );
 };

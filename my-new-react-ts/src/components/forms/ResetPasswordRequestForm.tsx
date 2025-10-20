@@ -1,16 +1,27 @@
-import {Form, Input, Button, type FormProps} from "antd";
 import {useResetPasswordRequestMutation} from "../../services/userService.ts";
 import {useNavigate} from "react-router";
 import type {IResetPasswordRequest} from "../../types/users/IResetPasswordRequest.ts";
+import InputField from "../inputs/InputField.tsx";
+import BaseButton from "../buttons/BaseButton.tsx";
+import { useState } from "react";
 
 const ResetPasswordRequestForm: React.FC = () => {
-    const [form] = Form.useForm();
     const [resetRequest, { isLoading }] = useResetPasswordRequestMutation();
     const navigate = useNavigate();
 
-    const onFinish: FormProps<IResetPasswordRequest>["onFinish"] = async (values) => {
+    const [formValues, setFormValues] = useState<IResetPasswordRequest>({ email: "" });
+
+    const [errors, setErrors] = useState<string[]>([]);
+
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setFormValues({ ...formValues, [e.target.name]: e.target.value });
+    };
+
+    const onFinish = async (e: React.FormEvent) => {
+        e.preventDefault();
+
         try {
-            const result = await resetRequest(values).unwrap();
+            const result = await resetRequest(formValues).unwrap();
             console.log(result)
             navigate('/success-confirm');
         } catch (err: any) {
@@ -19,36 +30,33 @@ const ResetPasswordRequestForm: React.FC = () => {
         }
     };
 
+    const validationChange = (isValid: boolean, fieldKey: string) => {
+        if (isValid && errors.includes(fieldKey)) {
+            setErrors(errors.filter((x) => x !== fieldKey));
+        } else if (!isValid && !errors.includes(fieldKey)) {
+            setErrors((state) => [...state, fieldKey]);
+        }
+    };
+
     return (
-        <Form
-            form={form}
-            layout="vertical"
-            onFinish={onFinish}
-            style={{ width: "100%" }}
-        >
-            <Form.Item
+        <form onSubmit={onFinish} className="space-y-4">
+            <InputField
                 label="Email"
                 name="email"
-                rules={[
-                    { required: true, message: "Please enter your email" },
-                    { type: "email", message: "Invalid email format" },
-                ]}
-            >
-                <Input placeholder="johnsmith@example.com" />
-            </Form.Item>
+                placeholder="pedro@gmail.com"
+                value={formValues.email}
+                onChange={handleChange}
+                onValidationChange={validationChange}
+                rules={[{ rule: "required", message: "Email is required" }]}
+            />
 
-            <Form.Item>
-                <Button
-                    type="primary"
-                    htmlType="submit"
-                    loading={isLoading}
-                    block
-                    style={{ height: "40px", fontWeight: 600 }}
-                >
-                    Reset
-                </Button>
-            </Form.Item>
-        </Form>
+            <BaseButton
+                type="submit"
+                className="w-full rounded-xl !bg-purple-500 dark:!bg-gray-900 text-white font-medium py-2"
+            >
+                {isLoading ? "Loading..." : "Reset"}
+            </BaseButton>
+        </form>
     );
 };
 
