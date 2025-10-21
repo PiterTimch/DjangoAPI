@@ -16,8 +16,8 @@ const LoginForm: React.FC = () => {
     const navigate = useNavigate();
     const { executeRecaptcha } = useGoogleReCaptcha();
 
-    const [login, { isLoading }] = useLoginMutation();
-    const [loginByGoogle, { isLoading: isGoogleLoading }] = useLoginByGoogleMutation();
+    const [login, { isLoading, error : loginError }] = useLoginMutation();
+    const [loginByGoogle, { isLoading: isGoogleLoading, error : GoogleLoginError }] = useLoginByGoogleMutation();
 
     const [formValues, setFormValues] = useState<ILoginRequest>({
         username: "",
@@ -27,15 +27,10 @@ const LoginForm: React.FC = () => {
     const [errors, setErrors] = useState<string[]>([]);
 
     const loginUseGoogle = useGoogleLogin({
-        onSuccess: async (tokenResponse) => {
-            try {
-                const model: IGoogleLoginRequest = { token: tokenResponse.access_token };
-                const result = await loginByGoogle(model).unwrap();
-                dispatch(setTokens(result));
-                navigate("/");
-            } catch (error) {
-                console.error(error);
-            }
+        onSuccess: async (tokenResponse) => {const model: IGoogleLoginRequest = { token: tokenResponse.access_token };
+            const result = await loginByGoogle(model).unwrap();
+            dispatch(setTokens(result));
+            navigate("/");
         },
     });
 
@@ -58,19 +53,20 @@ const LoginForm: React.FC = () => {
         const token = await executeRecaptcha("login");
         const payload: ILoginRequest = { ...formValues, recaptcha_token: token };
 
-        console.log(payload);
-
-        try {
-            const result = await login(payload).unwrap();
-            dispatch(setTokens(result));
-            navigate("/");
-        } catch (err: any) {
-            console.error(err?.data?.errors);
-        }
+        const result = await login(payload).unwrap();
+        dispatch(setTokens(result));
+        navigate("/");
     };
 
     return (
         <form onSubmit={handleSubmit} className="space-y-4">
+            {loginError && GoogleLoginError &&
+                <div className="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400"
+                     role="alert">
+                    <span className="font-medium">Дані вказано неправильно</span>
+                </div>
+            }
+
             <InputField
                 label="Username"
                 name="username"
