@@ -63,3 +63,13 @@ python manage.py shell
 from topics.seed_topics import run
 run()
 ```
+
+## Working post (myredit)
+
+```
+py manage.py startapp posts
+
+py manage.py makemigrations posts
+
+py manage.py migrate
+```

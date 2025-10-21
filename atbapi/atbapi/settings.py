@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     "corsheaders",
     'topics',
     'django_filters',
+    'posts'
 ]
 
 REST_FRAMEWORK = {
@@ -156,6 +157,10 @@ STATIC_URL = 'static/'
 AVATARS_URL = '/images/'
 
 AVATARS_ROOT = BASE_DIR / 'images'
+
+VIDEOS_URL = '/videos/'
+
+VIDEOS_ROOT = BASE_DIR / 'videos'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field

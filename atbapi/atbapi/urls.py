@@ -15,3 +15,4 @@ urlpatterns = [
     path('redoc/', SpectacularRedocView.as_view(url_name='schema'), name='redoc'),
 ]
 urlpatterns += static(settings.AVATARS_URL, document_root=settings.AVATARS_ROOT)
+urlpatterns += static(settings.VIDEOS_URL, document_root=settings.VIDEOS_ROOT )
