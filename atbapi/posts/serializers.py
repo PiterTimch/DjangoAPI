@@ -3,9 +3,20 @@ from .models import Post
 
 
 class PostSerializer(serializers.ModelSerializer):
-    user_name = serializers.StringRelatedField(source='user.first_name', read_only=True)  # fixed typo
+    user_id = serializers.PrimaryKeyRelatedField(
+        source='user',
+        queryset=Post._meta.get_field('user').remote_field.model.objects.all()
+    )
+    topic_id = serializers.PrimaryKeyRelatedField(
+        source='topic',
+        queryset=Post._meta.get_field('topic').remote_field.model.objects.all()
+    )
+
+    user_name = serializers.StringRelatedField(source='user.first_name', read_only=True)
     topic_name = serializers.StringRelatedField(source='topic.name', read_only=True)
-    has_media = serializers.SerializerMethodField()
+
+    image = serializers.ImageField(required=False, allow_null=True)
+    video = serializers.FileField(required=False, allow_null=True)
 
     class Meta:
         model = Post
@@ -17,12 +28,8 @@ class PostSerializer(serializers.ModelSerializer):
             'video',
             'video_url',
             'created_at',
-            'user',
-            'topic',
-            'topic_name',
+            'user_id',
             'user_name',
-            'has_media',
+            'topic_id',
+            'topic_name',
         ]
-
-    # def get_has_media(self, obj):
-    #     return obj.has_media()
