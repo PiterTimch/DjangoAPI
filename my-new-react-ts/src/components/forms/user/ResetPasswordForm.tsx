@@ -1,9 +1,9 @@
-import { useResetPasswordMutation } from "../../services/userService.ts";
+import { useResetPasswordMutation } from "../../../services/userService.ts";
 import { useNavigate, useParams } from "react-router";
-import type { IResetPasswordConfirm } from "../../types/users/IResetPasswordConfirm.ts";
+import type { IResetPasswordConfirm } from "../../../types/users/IResetPasswordConfirm.ts";
 import {useState} from "react";
-import InputField from "../inputs/InputField.tsx";
-import BaseButton from "../buttons/BaseButton.tsx";
+import InputField from "../../inputs/InputField.tsx";
+import BaseButton from "../../buttons/BaseButton.tsx";
 
 const ResetPasswordForm: React.FC = () => {
     const [reset, { isLoading }] = useResetPasswordMutation();

@@ -4,12 +4,12 @@ import { Link, useNavigate } from "react-router";
 import { useGoogleReCaptcha } from "react-google-recaptcha-v3";
 import { useGoogleLogin } from "@react-oauth/google";
 
-import { useLoginMutation, useLoginByGoogleMutation } from "../../services/userService.ts";
-import { setTokens } from "../../store/authSlice.ts";
-import InputField from "../inputs/InputField.tsx";
-import BaseButton from "../buttons/BaseButton.tsx";
-import type { ILoginRequest } from "../../types/users/ILoginRequest.ts";
-import type { IGoogleLoginRequest } from "../../types/users/IGoogleLoginRequest.ts";
+import { useLoginMutation, useLoginByGoogleMutation } from "../../../services/userService.ts";
+import { setTokens } from "../../../store/authSlice.ts";
+import InputField from "../../inputs/InputField.tsx";
+import BaseButton from "../../buttons/BaseButton.tsx";
+import type { ILoginRequest } from "../../../types/users/ILoginRequest.ts";
+import type { IGoogleLoginRequest } from "../../../types/users/IGoogleLoginRequest.ts";
 
 const LoginForm: React.FC = () => {
     const dispatch = useDispatch();

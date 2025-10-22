@@ -3,12 +3,12 @@ import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router";
 import { useGoogleReCaptcha } from "react-google-recaptcha-v3";
 
-import { useRegisterMutation } from "../../services/userService.ts";
-import { setTokens } from "../../store/authSlice.ts";
-import InputField from "../inputs/InputField.tsx";
-import BaseButton from "../buttons/BaseButton.tsx";
-import ImageUploader from "../uploaders/ImagesUploader.tsx";
-import type { IUserRegister } from "../../types/users/IUserRegister.ts";
+import { useRegisterMutation } from "../../../services/userService.ts";
+import { setTokens } from "../../../store/authSlice.ts";
+import InputField from "../../inputs/InputField.tsx";
+import BaseButton from "../../buttons/BaseButton.tsx";
+import ImageUploader from "../../uploaders/ImagesUploader.tsx";
+import type { IUserRegister } from "../../../types/users/IUserRegister.ts";
 import type { UploadFile } from "antd/es/upload/interface";
 
 const RegisterForm: React.FC = () => {
