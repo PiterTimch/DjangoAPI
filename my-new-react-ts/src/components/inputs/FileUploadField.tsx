@@ -8,8 +8,8 @@ interface Props {
     setFile: (file: File | null) => void;
     error?: string;
     setError?: (err?: string) => void;
-    maxSize?: number; // максимальний розмір файлу в MB
-    allowedTypes?: string[]; // дозволені MIME типи
+    maxSize?: number;
+    allowedTypes?: string[];
 }
 
 const FileUploadField: React.FC<Props> = ({
@@ -20,21 +20,19 @@ const FileUploadField: React.FC<Props> = ({
                                                                setFile,
                                                                error,
                                                                setError,
-                                                               maxSize = 10, // за замовчуванням 10MB
-                                                               allowedTypes = [], // за замовчуванням без обмежень
+                                                               maxSize = 10,
+                                                               allowedTypes = [],
                                                            }) => {
     const [preview, setPreview] = useState<string | null>(null);
 
     const validateFile = (file: File): string | null => {
-        // Перевірка розміру файлу
         const fileSizeMB = file.size / (1024 * 1024);
         if (fileSizeMB > maxSize) {
-            return `Розмір файлу не повинен перевищувати ${maxSize}MB`;
+            return `Size can't be more than ${maxSize}MB`;
         }
 
-        // Перевірка типу файлу
         if (allowedTypes.length > 0 && !allowedTypes.includes(file.type)) {
-            return `Непідтримуваний тип файлу. Дозволені типи: ${allowedTypes.join(', ')}`;
+            return `Invalid type. Allowed: ${allowedTypes.join(', ')}`;
         }
 
         return null;

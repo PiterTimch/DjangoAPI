@@ -4,9 +4,13 @@ import InputField from "../../inputs/InputField.tsx";
 import BaseButton from "../../buttons/BaseButton.tsx";
 import type {IPostCreate} from "../../../types/posts/IPostCreate.ts";
 import {useCreatePostMutation} from "../../../services/postService.ts";
+import {useGetTopicsQuery} from "../../../services/topicService.ts";
+import SelectField from "../../inputs/SelectField.tsx";
+import TextareaField from "../../inputs/TextareaField.tsx";
 
 const TextPostForm: React.FC = () => {
     const navigate = useNavigate();
+    const { data: topics = [] } = useGetTopicsQuery();
 
     const [createPost, { isLoading, error : createError }] = useCreatePostMutation();
 
@@ -14,7 +18,7 @@ const TextPostForm: React.FC = () => {
         title: "",
         body: "",
         user_id: 14,
-        topic_id: 37,
+        topic_id: 0,
     });
 
     const [errors, setErrors] = useState<string[]>([]);
@@ -27,7 +31,7 @@ const TextPostForm: React.FC = () => {
         }
     };
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
         setFormValues((prev) => ({ ...prev, [e.target.name]: e.target.value }));
     };
 
@@ -38,12 +42,14 @@ const TextPostForm: React.FC = () => {
         navigate("/");
     };
 
+    const topicOptions = topics.map((t) => ({ value: t.id, label: t.name }));
+
     return (
         <form onSubmit={handleSubmit} className="space-y-4">
             {createError &&
                 <div className="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400"
                      role="alert">
-                    <span className="font-medium">Дані вказано неправильно</span>
+                    <span className="font-medium">Data error</span>
                 </div>
             }
 
@@ -57,14 +63,22 @@ const TextPostForm: React.FC = () => {
                 rules={[{ rule: "required", message: "Title is required" }]}
             />
 
-            <InputField
+            <TextareaField
                 label="Body"
                 name="body"
-                placeholder="Lol"
                 value={formValues.body}
                 onChange={handleChange}
-                onValidationChange={validationChange}
                 rules={[{ rule: "required", message: "Text is required" }]}
+            />
+
+            <SelectField
+                label="Topic"
+                name="topic_id"
+                value={formValues.topic_id}
+                options={topicOptions}
+                onChange={handleChange}
+                onValidationChange={validationChange}
+                rules={[{ rule: "required", message: "Topic is required" }]}
             />
 
             <BaseButton

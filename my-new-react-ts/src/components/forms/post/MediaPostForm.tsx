@@ -44,17 +44,9 @@ const MediaPostForm: React.FC = () => {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
-        // базова валідація
-        if (!formValues.title.trim()) return setErrors(["title"]);
-        if (!formValues.topic_id) return setErrors(["topic_id"]);
-        if (!formValues.image && !formValues.video) return setFileErrors({ image: "Завантажте хоча б зображення або відео" });
+        await createPost(formValues).unwrap();
+        navigate("/");
 
-        try {
-            await createPost(formValues).unwrap();
-            navigate("/");
-        } catch {
-            // помилка відображається через RTK Query
-        }
     };
 
     const topicOptions = topics.map((t) => ({ value: t.id, label: t.name }));
@@ -63,28 +55,28 @@ const MediaPostForm: React.FC = () => {
         <form onSubmit={handleSubmit} className="space-y-4">
             {error && (
                 <div className="p-3 text-sm text-red-700 bg-red-50 rounded-md dark:bg-gray-800 dark:text-red-400">
-                    Помилка створення посту
+                    Data error
                 </div>
             )}
 
             <InputField
-                label="Назва"
+                label="Title"
                 name="title"
                 value={formValues.title}
                 onChange={handleChange}
                 onValidationChange={validationChange}
-                rules={[{ rule: "required", message: "Назва обов’язкова" }]}
+                rules={[{ rule: "required", message: "Title is required" }]}
             />
 
             <TextareaField
-                label="Опис"
+                label="Body"
                 name="body"
                 value={formValues.body}
                 onChange={handleChange}
             />
 
             <FileUploadField
-                label="Зображення"
+                label="Image"
                 name="image"
                 accept="image/*"
                 file={formValues.image}
@@ -95,7 +87,7 @@ const MediaPostForm: React.FC = () => {
             />
 
             <FileUploadField
-                label="Відео"
+                label="Video"
                 name="video"
                 accept="video/*"
                 file={formValues.video}
@@ -106,13 +98,13 @@ const MediaPostForm: React.FC = () => {
             />
 
             <SelectField
-                label="Тема"
+                label="Topic"
                 name="topic_id"
                 value={formValues.topic_id}
                 options={topicOptions}
                 onChange={handleChange}
                 onValidationChange={validationChange}
-                rules={[{ rule: "required", message: "Оберіть тему" }]}
+                rules={[{ rule: "required", message: "Topic is required" }]}
             />
 
             <BaseButton

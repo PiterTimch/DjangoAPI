@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import TextPostForm from "../../../components/forms/post/TextPostForm";
 import LinkPostForm from "../../../components/forms/post/LinkPostForm";
 import MediaPostForm from "../../../components/forms/post/MediaPostForm.tsx";
+import BaseButton from "../../../components/buttons/BaseButton.tsx";
 
 const tabs = [
     { key: "text", label: "✏️ Text" },
@@ -27,22 +28,21 @@ const CreatePostPage: React.FC = () => {
 
                     <div className="flex justify-center gap-2 mb-6">
                         {tabs.map((tab) => (
-                            <button
+                            <BaseButton
                                 key={tab.key}
                                 onClick={() => setActiveTab(tab.key)}
                                 className={`px-4 py-2 rounded-full text-sm font-medium transition-colors 
-                  ${
+                                ${
                                     activeTab === tab.key
                                         ? "bg-purple-600 text-white"
                                         : "bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600"
                                 }`}
                             >
                                 {tab.label}
-                            </button>
+                            </BaseButton>
                         ))}
                     </div>
 
-                    {/* Forms */}
                     {activeTab === "text" && <TextPostForm />}
                     {activeTab === "link" && <LinkPostForm />}
                     {activeTab === "media" && <MediaPostForm />}

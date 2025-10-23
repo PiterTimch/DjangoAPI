@@ -33,16 +33,10 @@ const LinkPostForm: React.FC = () => {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (!formValues.title.trim()) return setErrors(["title"]);
-        if (!formValues.video_url.trim()) return setErrors(["video_url"]);
-        if (!formValues.topic_id) return setErrors(["topic_id"]);
 
-        try {
-            await createPost(formValues).unwrap();
-            navigate("/");
-        } catch {
-            // помилка відображається через RTK Query
-        }
+        await createPost(formValues).unwrap();
+        navigate("/");
+
     };
 
     const topicOptions = topics.map((t) => ({ value: t.id, label: t.name }));
@@ -51,43 +45,43 @@ const LinkPostForm: React.FC = () => {
         <form onSubmit={handleSubmit} className="space-y-4">
             {error && (
                 <div className="p-3 text-sm text-red-700 bg-red-50 rounded-md dark:bg-gray-800 dark:text-red-400">
-                    Помилка створення посту
+                    Data error
                 </div>
             )}
 
             <InputField
-                label="Назва"
+                label="Title"
                 name="title"
                 value={formValues.title}
                 onChange={handleChange}
                 onValidationChange={validationChange}
-                rules={[{ rule: "required", message: "Назва обов’язкова" }]}
+                rules={[{ rule: "required", message: "Title is required" }]}
             />
 
             <InputField
-                label="Посилання"
+                label="Link"
                 name="video_url"
                 value={formValues.video_url}
                 onChange={handleChange}
                 onValidationChange={validationChange}
-                rules={[{ rule: "required", message: "Посилання обов’язкове" }]}
+                rules={[{ rule: "required", message: "Link is required" }]}
             />
 
             <SelectField
-                label="Тема"
+                label="Topic"
                 name="topic_id"
                 value={formValues.topic_id}
                 options={topicOptions}
                 onChange={handleChange}
                 onValidationChange={validationChange}
-                rules={[{ rule: "required", message: "Оберіть тему" }]}
+                rules={[{ rule: "required", message: "Topic is required" }]}
             />
 
             <BaseButton
                 type="submit"
                 className="w-full rounded-xl !bg-purple-500 dark:!bg-gray-900 text-white font-medium py-2"
             >
-                {isLoading ? "Creating..." : "Створити пост з посиланням"}
+                {isLoading ? "Creating..." : "Create"}
             </BaseButton>
         </form>
     );

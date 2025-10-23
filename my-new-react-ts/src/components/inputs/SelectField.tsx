@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import type { FormFieldRule } from "../../utils/validations";
 import { validate } from "../../utils/validations";
 
@@ -53,7 +53,7 @@ const SelectField: React.FC<Props> = ({
                    dark:bg-gray-700 dark:border-gray-600 dark:text-white
                    dark:focus:ring-blue-500 dark:focus:border-blue-500"
             >
-                <option value="">Оберіть...</option>
+                <option value="">Select...</option>
                 {options.map((opt) => (
                     <option key={opt.value} value={opt.value}>
                         {opt.label}
