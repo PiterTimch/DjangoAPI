@@ -34,7 +34,7 @@ const InputField: React.FC<InputFieldProps> = ({
     useEffect(()=>{
         if(value)
             validateField(value)
-    }, [rules]);
+    }, [value]);
 
     const onTextChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (onChange)

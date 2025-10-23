@@ -20,15 +20,15 @@ const TextPostForm: React.FC = () => {
     const [errors, setErrors] = useState<string[]>([]);
 
     const validationChange = (isValid: boolean, fieldKey: string) => {
-        if (isValid && errors.includes(fieldKey)) {
-            setErrors(errors.filter((x) => x !== fieldKey));
-        } else if (!isValid && !errors.includes(fieldKey)) {
-            setErrors((state) => [...state, fieldKey]);
+        if (isValid) {
+            setErrors((prev) => prev.filter((x) => x !== fieldKey));
+        } else if (!errors.includes(fieldKey)) {
+            setErrors((prev) => [...prev, fieldKey]);
         }
     };
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setFormValues({ ...formValues, [e.target.name]: e.target.value });
+        setFormValues((prev) => ({ ...prev, [e.target.name]: e.target.value }));
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
