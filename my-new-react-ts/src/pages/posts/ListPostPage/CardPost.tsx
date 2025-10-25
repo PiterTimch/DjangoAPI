@@ -1,6 +1,7 @@
 import React from "react";
-import type {IPostItem} from "../../../types/posts/IPostItem.ts";
-import {Link} from "react-router";
+import type { IPostItem } from "../../../types/posts/IPostItem.ts";
+import { Link } from "react-router";
+import {APP_ENV} from "../../../env";
 
 interface CardPostProps {
     post: IPostItem;
@@ -9,20 +10,21 @@ interface CardPostProps {
 const CardPost: React.FC<CardPostProps> = ({ post }) => {
     const isExternalLink = post.video_url?.startsWith("http");
 
+    const imageSrc = post.image ? APP_ENV.IMAGE_BASE_URL + post.image : null;
+    const videoSrc = post.video ? APP_ENV.VIDEO_BASE_URL + post.video : null;
+
     return (
-        <div
-            className="
-        border border-gray-200 dark:border-gray-700
-        bg-white dark:bg-gray-900
-        rounded-md p-4 mb-4
-        hover:bg-gray-50 dark:hover:bg-gray-800
-        transition-colors
-      "
-        >
+        <div className="
+            border border-gray-200 dark:border-gray-700
+            bg-white dark:bg-gray-900
+            rounded-md p-4 mb-4
+            hover:bg-gray-50 dark:hover:bg-gray-800
+            transition-colors
+        ">
             <div className="text-sm text-gray-500 dark:text-gray-400 mb-1">
-        <span className="font-medium text-gray-700 dark:text-gray-300">
-          u/{post.user_name}
-        </span>
+                <span className="font-medium text-gray-700 dark:text-gray-300">
+                    u/{post.user_name}
+                </span>
                 {" • "}
                 <span>{post.topic_name}</span>
                 {" • "}
@@ -36,12 +38,28 @@ const CardPost: React.FC<CardPostProps> = ({ post }) => {
                   hover:text-blue-600 dark:hover:text-blue-400
                   transition-colors mb-2
                 "
-                    >
+            >
                 {post.title}
             </Link>
 
             {post.body && (
                 <p className="text-gray-700 dark:text-gray-300 mb-2">{post.body}</p>
+            )}
+
+            {imageSrc && (
+                <img
+                    src={imageSrc}
+                    alt={post.title}
+                    className="mb-2 max-w-full rounded"
+                />
+            )}
+
+            {videoSrc && (
+                <video
+                    controls
+                    className="mb-2 max-w-full rounded"
+                    src={videoSrc}
+                />
             )}
 
             {post.video_url && (
