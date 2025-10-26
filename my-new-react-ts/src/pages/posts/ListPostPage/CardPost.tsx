@@ -2,6 +2,7 @@ import React from "react";
 import type { IPostItem } from "../../../types/posts/IPostItem.ts";
 import { Link } from "react-router";
 import {APP_ENV} from "../../../env";
+import StylishVideoPlayer from "../../../components/media/StylishVideoPlayer.tsx";
 
 interface CardPostProps {
     post: IPostItem;
@@ -55,9 +56,7 @@ const CardPost: React.FC<CardPostProps> = ({ post }) => {
             )}
 
             {videoSrc && (
-                <video
-                    controls
-                    className="mb-2 max-w-full rounded"
+                <StylishVideoPlayer
                     src={videoSrc}
                 />
             )}
